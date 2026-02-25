@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
-import CreateRoom from './components/CreateRoom'
-import PokerBoard from './components/PokerBoard'
+import CreateRoom from './pages/CreateRoom'
+import PokerBoard from './pages/PokerBoard'
 
 function App() {
   return (

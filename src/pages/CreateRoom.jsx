@@ -5,7 +5,7 @@ import { Settings, Play } from 'lucide-react';
 
 const VOTING_TEMPLATES = {
     FIBONACCI: ['0', '1', '2', '3', '5', '8', '13', 'Skip'],
-    TSHIRT: ['XS', 'S', 'M', 'L', 'XL', 'Skip'],
+    TSHIRT: ['XSS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'Skip'],
 };
 
 export default function CreateRoom() {
@@ -88,7 +88,7 @@ export default function CreateRoom() {
                             />
                             <div className="ml-3">
                                 <span className="block text-sm font-medium text-gray-900">T-Shirt Size</span>
-                                <span className="block text-xs text-gray-500">XS, S, M, L, XL</span>
+                                <span className="block text-xs text-gray-500">XXS, XS, S, M, L, XL, XXL, XXXL</span>
                             </div>
                         </label>
 
@@ -132,9 +132,9 @@ export default function CreateRoom() {
                     className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                     {loading ? (
-                        <span className="animate-pulse flex items-center">
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                            Creating...
+                        <span className="animate-pulse flex items-center text-lg font-bold">
+                            <span className="animate-bounce mr-2">☕</span>
+                            Brewing room...
                         </span>
                     ) : (
                         <>

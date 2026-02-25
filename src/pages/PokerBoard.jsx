@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useRoom } from '../context/RoomContext';
-import CardDeck from './CardDeck';
-import ParticipantList from './ParticipantList';
-import RoomControls from './RoomControls';
-import VotingResults from './VotingResults';
-import { User, LogOut } from 'lucide-react';
+import CardDeck from '../components/CardDeck';
+import ParticipantList from '../components/ParticipantList';
+import RoomControls from '../components/RoomControls';
+import VotingResults from '../components/VotingResults';
+import { User, LogOut, RefreshCw } from 'lucide-react';
 
 export default function PokerBoard() {
     const { id: roomId } = useParams();
@@ -14,6 +14,7 @@ export default function PokerBoard() {
     const [nickname, setNickname] = useState('');
     const [joining, setJoining] = useState(false);
     const [isReady, setIsReady] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     useEffect(() => {
         const initRoom = async () => {
@@ -39,13 +40,27 @@ export default function PokerBoard() {
 
     const handleLeave = () => {
         localStorage.removeItem(`poker_user_${roomId}`);
+        document.cookie = 'poker_nickname=; path=/; max-age=0;';
         navigate('/');
+    };
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await loadRoomData(roomId);
+        setIsRefreshing(false);
     };
 
     if (!isReady) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50/50">
+                <div className="relative flex justify-center items-center">
+                    <div className="absolute animate-ping w-24 h-24 rounded-full bg-indigo-200 opacity-60"></div>
+                    <div className="relative flex items-center justify-center w-24 h-24 bg-white rounded-full shadow-lg border-4 border-indigo-500 text-4xl transform transition-transform hover:scale-110">
+                        <span className="animate-bounce mt-2">☕</span>
+                    </div>
+                </div>
+                <h2 className="mt-8 text-2xl font-bold text-gray-800 animate-pulse tracking-wide">Brewing your room...</h2>
+                <p className="mt-3 text-gray-500 font-medium tracking-wide">Please wait while we set up the table</p>
             </div>
         );
     }
@@ -102,7 +117,12 @@ export default function PokerBoard() {
                         disabled={joining || !nickname.trim()}
                         className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
-                        {joining ? 'Joining...' : 'Join Table'}
+                        {joining ? (
+                            <span className="animate-pulse flex items-center text-lg font-bold">
+                                <span className="animate-bounce mr-2">☕</span>
+                                Taking a seat...
+                            </span>
+                        ) : 'Join Table'}
                     </button>
                 </form>
             </div>
@@ -121,11 +141,20 @@ export default function PokerBoard() {
                         {currentRoom.status === 'voting' ? 'Voting in progress' : 'Cards revealed'}
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                     <div className="hidden sm:flex items-center text-sm bg-gray-50 px-3 py-1.5 rounded-full border">
                         <User className="w-4 h-4 mr-2 text-gray-400" />
                         <span className="font-medium">{currentUser.name}</span>
                     </div>
+                    <button
+                        onClick={handleRefresh}
+                        disabled={isRefreshing}
+                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors flex items-center"
+                        title="Refresh Room"
+                    >
+                        <RefreshCw className={`w-5 h-5 sm:mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        <span className="hidden sm:inline text-sm font-medium">Refresh</span>
+                    </button>
                     <button
                         onClick={handleLeave}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center"

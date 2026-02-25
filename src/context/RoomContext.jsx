@@ -19,6 +19,19 @@ export const RoomProvider = ({ children }) => {
         setLoading(true);
         setError(null);
         try {
+            // Check if room with the same name already exists
+            const { data: existingRoom } = await supabase
+                .from('rooms')
+                .select('id')
+                .eq('name', name)
+                .maybeSingle();
+
+            if (existingRoom) {
+                // Update voting options to the latest requested
+                await supabase.from('rooms').update({ voting_options: votingOptions }).eq('id', existingRoom.id);
+                return existingRoom.id;
+            }
+
             const { data, error } = await supabase
                 .from('rooms')
                 .insert([{ name, voting_options: votingOptions, status: 'voting' }])
@@ -61,6 +74,9 @@ export const RoomProvider = ({ children }) => {
             // 3. Save to local storage
             localStorage.setItem(`poker_user_${roomId}`, JSON.stringify(participantData));
 
+            // 4. Save global cookie for nickname persistence across rooms
+            document.cookie = `poker_nickname=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 24 * 30};`;
+
             setCurrentRoom(roomData);
             setCurrentUser(participantData);
 
@@ -80,14 +96,15 @@ export const RoomProvider = ({ children }) => {
             try {
                 const parsedUser = JSON.parse(savedUser);
 
-                // Verify user still exists in DB
+                // Verify user still exists in DB and matches room and name
                 const { data, error } = await supabase
                     .from('participants')
                     .select('*')
                     .eq('id', parsedUser.id)
+                    .eq('room_id', roomId)
                     .single();
 
-                if (data && !error) {
+                if (data && !error && data.name === parsedUser.name) {
                     setCurrentUser(data);
                     return true;
                 } else {
@@ -98,6 +115,16 @@ export const RoomProvider = ({ children }) => {
                 localStorage.removeItem(`poker_user_${roomId}`);
             }
         }
+
+        // Check global cookie for automatic cross-room join
+        const match = document.cookie.match(/(?:^|; )poker_nickname=([^;]+)/);
+        const globalNickname = match ? decodeURIComponent(match[1]) : null;
+
+        if (globalNickname) {
+            const success = await joinRoom(roomId, globalNickname);
+            return success;
+        }
+
         return false;
     };
 
