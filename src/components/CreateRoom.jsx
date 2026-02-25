@@ -4,7 +4,7 @@ import { useRoom } from '../context/RoomContext';
 import { Settings, Play } from 'lucide-react';
 
 const VOTING_TEMPLATES = {
-    FIBONACCI: ['0', '1', '2', '3', '5', '8', '13', '21', 'Skip'],
+    FIBONACCI: ['0', '1', '2', '3', '5', '8', '13', 'Skip'],
     TSHIRT: ['XS', 'S', 'M', 'L', 'XL', 'Skip'],
 };
 
@@ -73,7 +73,7 @@ export default function CreateRoom() {
                             />
                             <div className="ml-3">
                                 <span className="block text-sm font-medium text-gray-900">Fibonacci</span>
-                                <span className="block text-xs text-gray-500">0, 1, 2, 3, 5, 8, 13, 21</span>
+                                <span className="block text-xs text-gray-500">0, 1, 2, 3, 5, 8, 13</span>
                             </div>
                         </label>
 

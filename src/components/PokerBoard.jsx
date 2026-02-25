@@ -4,6 +4,7 @@ import { useRoom } from '../context/RoomContext';
 import CardDeck from './CardDeck';
 import ParticipantList from './ParticipantList';
 import RoomControls from './RoomControls';
+import VotingResults from './VotingResults';
 import { User, LogOut } from 'lucide-react';
 
 export default function PokerBoard() {
@@ -139,8 +140,9 @@ export default function PokerBoard() {
             {/* Main Content */}
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 flex flex-col gap-8">
-                    <ParticipantList />
                     <RoomControls />
+                    <ParticipantList />
+                    <VotingResults />
                 </div>
 
                 <div className="lg:col-span-1">

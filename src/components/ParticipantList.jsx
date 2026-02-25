@@ -33,22 +33,22 @@ export default function ParticipantList() {
                             <div
                                 key={participant.id}
                                 className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all ${hasVoted
-                                        ? 'border-indigo-100 bg-indigo-50/30'
-                                        : 'border-dashed border-gray-200 bg-gray-50/50'
+                                    ? 'border-indigo-100 bg-indigo-50/30'
+                                    : 'border-dashed border-gray-200 bg-gray-50/50'
                                     }`}
                             >
                                 {/* The "Card" on the table */}
                                 <div
-                                    className={`w-12 h-16 rounded-md shadow-sm mb-3 flex items-center justify-center transition-all duration-500 transform ${isRevealed && hasVoted ? 'bg-indigo-600 rotate-y-180' :
-                                            hasVoted ? 'bg-indigo-200 border-2 border-indigo-300' :
-                                                'bg-white border border-gray-200'
+                                    className={`w-12 h-16 rounded-md shadow-sm mb-3 flex items-center justify-center transition-all duration-500 ${isRevealed && hasVoted ? 'bg-indigo-600 [transform:rotateY(180deg)]' :
+                                        hasVoted ? 'bg-indigo-200 border-2 border-indigo-300' :
+                                            'bg-white border border-gray-200'
                                         }`}
                                     style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
                                 >
                                     {isRevealed && hasVoted ? (
-                                        <span className="text-white font-bold text-lg select-none" style={{ transform: 'rotateY(180deg)' }}>
+                                        <div className="text-white font-bold text-lg select-none" style={{ transform: 'rotateY(180deg)' }}>
                                             {participant.vote}
-                                        </span>
+                                        </div>
                                     ) : hasVoted ? (
                                         <Check className="w-5 h-5 text-indigo-500" />
                                     ) : (

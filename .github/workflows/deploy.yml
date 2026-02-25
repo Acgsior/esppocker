@@ -1,0 +1,44 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ] # 如果你的默认分支叫 master，请把这里改成 master
+
+# 设置 GitHub Pages 所需的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 允许并发部署，但如果有新的推送，取消正在进行的旧部署
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      # 如果你用的是 pnpm 或 yarn，请修改下方的 npm 命令
+      - name: 安装依赖并打包
+        run: |
+          npm install
+          npm run build
+
+      - name: 配置 GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: 上传构建产物 (dist 目录)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist' # Vite 默认的打包输出目录是 dist
+
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
