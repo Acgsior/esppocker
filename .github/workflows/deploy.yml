@@ -30,6 +30,9 @@ jobs:
         run: |
           npm install
           npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - name: 配置 GitHub Pages
         uses: actions/configure-pages@v4

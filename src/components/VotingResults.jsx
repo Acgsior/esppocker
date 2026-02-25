@@ -33,28 +33,36 @@ export default function VotingResults() {
         }))
         .sort((a, b) => b.count - a.count);
 
+    const maxCount = results.length > 0 ? results[0].count : 0;
+
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <h3 className="text-xl font-bold text-gray-800 mb-6">Voting Results</h3>
             <div className="space-y-4">
-                {results.map(item => (
-                    <div key={item.vote}>
-                        <div className="flex justify-between items-center mb-1 text-sm font-medium text-gray-700">
-                            <div className="flex items-center gap-2">
-                                <span className="inline-block px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded font-bold min-w-[2rem] text-center">
-                                    {item.vote}
-                                </span>
+                {results.map(item => {
+                    const isHighest = item.count === maxCount;
+                    const badgeColor = isHighest ? 'bg-orange-100 text-orange-800' : 'bg-indigo-100 text-indigo-800';
+                    const barColor = isHighest ? 'bg-orange-500' : 'bg-indigo-500';
+
+                    return (
+                        <div key={item.vote}>
+                            <div className="flex justify-between items-center mb-1 text-sm font-medium text-gray-700">
+                                <div className="flex items-center gap-2">
+                                    <span className={`inline-block px-2 py-0.5 rounded font-bold min-w-[2rem] text-center ${badgeColor}`}>
+                                        {item.vote}
+                                    </span>
+                                </div>
+                                <span className="text-gray-500">{item.count} vote{item.count !== 1 ? 's' : ''} ({item.percentage}%)</span>
                             </div>
-                            <span className="text-gray-500">{item.count} vote{item.count !== 1 ? 's' : ''} ({item.percentage}%)</span>
+                            <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                                <div
+                                    className={`${barColor} h-3 rounded-full transition-all duration-1000 ease-out`}
+                                    style={{ width: `${item.percentage}%` }}
+                                ></div>
+                            </div>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                            <div
-                                className="bg-indigo-500 h-3 rounded-full transition-all duration-1000 ease-out"
-                                style={{ width: `${item.percentage}%` }}
-                            ></div>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
