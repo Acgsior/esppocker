@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,8 @@ export const RoomProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [revealerId, setRevealerId] = useState(null);
+    const channelRef = useRef(null);
     const navigate = useNavigate();
 
     // Create a new room
@@ -185,6 +187,14 @@ export const RoomProvider = ({ children }) => {
                 .eq('id', roomId);
 
             if (error) throw error;
+
+            if (currentUser && channelRef.current) {
+                channelRef.current.send({
+                    type: 'broadcast',
+                    event: 'reveal_action',
+                    payload: { userId: currentUser.id }
+                });
+            }
         } catch (err) {
             console.error('Failed to reveal cards:', err.message);
         }
@@ -222,9 +232,16 @@ export const RoomProvider = ({ children }) => {
     useEffect(() => {
         if (!currentRoom) return;
 
-        // Room subscription (status changes)
-        const roomSubscription = supabase
-            .channel(`room_${currentRoom.id}`)
+        // Unified Room channel with broadcast enabled
+        const channel = supabase.channel(`poker_${currentRoom.id}`, {
+            config: {
+                broadcast: { self: true },
+            },
+        });
+
+        channelRef.current = channel;
+
+        channel
             .on('postgres_changes', {
                 event: 'UPDATE',
                 schema: 'public',
@@ -233,11 +250,6 @@ export const RoomProvider = ({ children }) => {
             }, (payload) => {
                 setCurrentRoom(payload.new);
             })
-            .subscribe();
-
-        // Participants subscription (joins, leaves, votes)
-        const participantsSubscription = supabase
-            .channel(`participants_${currentRoom.id}`)
             .on('postgres_changes', {
                 event: '*',
                 schema: 'public',
@@ -252,11 +264,15 @@ export const RoomProvider = ({ children }) => {
                     setParticipants(prev => prev.filter(p => p.id !== payload.old.id));
                 }
             })
+            .on('broadcast', { event: 'reveal_action' }, (payload) => {
+                setRevealerId(payload.payload.userId);
+                setTimeout(() => setRevealerId(null), 4000);
+            })
             .subscribe();
 
         return () => {
-            supabase.removeChannel(roomSubscription);
-            supabase.removeChannel(participantsSubscription);
+            supabase.removeChannel(channel);
+            channelRef.current = null;
         };
     }, [currentRoom?.id]);
 
@@ -266,6 +282,7 @@ export const RoomProvider = ({ children }) => {
         currentUser,
         loading,
         error,
+        revealerId,
         createRoom,
         joinRoom,
         checkSession,
