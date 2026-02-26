@@ -5,7 +5,7 @@ import CardDeck from '../components/CardDeck';
 import ParticipantList from '../components/ParticipantList';
 import RoomControls from '../components/RoomControls';
 import VotingResults from '../components/VotingResults';
-import { User, LogOut, RefreshCw } from 'lucide-react';
+import { User, LogOut, RefreshCw, Copy, Check } from 'lucide-react';
 
 export default function PokerBoard() {
     const { id: roomId } = useParams();
@@ -15,6 +15,7 @@ export default function PokerBoard() {
     const [joining, setJoining] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const initRoom = async () => {
@@ -48,6 +49,12 @@ export default function PokerBoard() {
         setIsRefreshing(true);
         await loadRoomData(roomId);
         setIsRefreshing(false);
+    };
+
+    const handleCopyUrl = () => {
+        navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
     if (!isReady) {
@@ -139,6 +146,16 @@ export default function PokerBoard() {
                     <div className="flex items-center text-sm text-stone-500 mt-1">
                         <span className={`inline-block w-2 h-2 rounded-full mr-2 ${currentRoom.status === 'voting' ? 'bg-green-500 animate-pulse' : 'bg-orange-500'}`}></span>
                         {currentRoom.status === 'voting' ? 'Voting in progress' : 'Cards revealed'}
+
+                        <span className="mx-2 text-stone-300">|</span>
+                        <button
+                            onClick={handleCopyUrl}
+                            className={`flex items-center gap-1 transition-colors ${copied ? 'text-green-600' : 'text-stone-400 hover:text-coffee-600'}`}
+                            title="Copy Room Link"
+                        >
+                            {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                            <span className="text-xs">{copied ? 'Copied!' : 'Copy Link'}</span>
+                        </button>
                     </div>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
