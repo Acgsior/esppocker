@@ -52,15 +52,15 @@ export default function PokerBoard() {
 
     if (!isReady) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50/50">
+            <div className="flex flex-col items-center justify-center min-h-screen bg-stone-50/50">
                 <div className="relative flex justify-center items-center">
-                    <div className="absolute animate-ping w-24 h-24 rounded-full bg-indigo-200 opacity-60"></div>
-                    <div className="relative flex items-center justify-center w-24 h-24 bg-white rounded-full shadow-lg border-4 border-indigo-500 text-4xl transform transition-transform hover:scale-110">
+                    <div className="absolute animate-ping w-24 h-24 rounded-full bg-coffee-200 opacity-60"></div>
+                    <div className="relative flex items-center justify-center w-24 h-24 bg-white rounded-full shadow-lg border-4 border-coffee-500 text-4xl transform transition-transform hover:scale-110">
                         <span className="animate-bounce mt-2">☕</span>
                     </div>
                 </div>
-                <h2 className="mt-8 text-2xl font-bold text-gray-800 animate-pulse tracking-wide">Brewing your room...</h2>
-                <p className="mt-3 text-gray-500 font-medium tracking-wide">Please wait while we set up the table</p>
+                <h2 className="mt-8 text-2xl font-bold text-stone-800 animate-pulse tracking-wide">Brewing your room...</h2>
+                <p className="mt-3 text-stone-500 font-medium tracking-wide">Please wait while we set up the table</p>
             </div>
         );
     }
@@ -85,27 +85,27 @@ export default function PokerBoard() {
     // Not joined yet
     if (!currentUser) {
         return (
-            <div className="max-w-md w-full mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-gray-100">
+            <div className="max-w-md w-full mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-stone-100">
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 mb-2">Join Room</h1>
-                    <p className="text-indigo-600 font-medium">{currentRoom.name}</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-stone-900 mb-2">Join Room</h1>
+                    <p className="text-coffee-600 font-medium">{currentRoom.name}</p>
                 </div>
 
                 <form onSubmit={handleJoin} className="space-y-6">
                     <div>
-                        <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label htmlFor="nickname" className="block text-sm font-medium text-stone-700 mb-1">
                             Your Nickname
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="h-5 w-5 text-gray-400" />
+                                <User className="h-5 w-5 text-stone-400" />
                             </div>
                             <input
                                 id="nickname"
                                 type="text"
                                 required
                                 placeholder="e.g. John Doe"
-                                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors outline-none"
+                                className="w-full pl-10 pr-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none"
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
                             />
@@ -115,7 +115,7 @@ export default function PokerBoard() {
                     <button
                         type="submit"
                         disabled={joining || !nickname.trim()}
-                        className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-coffee-600 hover:bg-coffee-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coffee-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                         {joining ? (
                             <span className="animate-pulse flex items-center text-lg font-bold">
@@ -133,23 +133,23 @@ export default function PokerBoard() {
     return (
         <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
             {/* Header */}
-            <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-stone-100">
                 <div>
-                    <h1 className="text-xl font-bold text-gray-900">{currentRoom.name}</h1>
-                    <div className="flex items-center text-sm text-gray-500 mt-1">
+                    <h1 className="text-xl font-bold text-stone-900">{currentRoom.name}</h1>
+                    <div className="flex items-center text-sm text-stone-500 mt-1">
                         <span className={`inline-block w-2 h-2 rounded-full mr-2 ${currentRoom.status === 'voting' ? 'bg-green-500 animate-pulse' : 'bg-blue-500'}`}></span>
                         {currentRoom.status === 'voting' ? 'Voting in progress' : 'Cards revealed'}
                     </div>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
-                    <div className="hidden sm:flex items-center text-sm bg-gray-50 px-3 py-1.5 rounded-full border">
-                        <User className="w-4 h-4 mr-2 text-gray-400" />
+                    <div className="hidden sm:flex items-center text-sm bg-stone-50 px-3 py-1.5 rounded-full border">
+                        <User className="w-4 h-4 mr-2 text-stone-400" />
                         <span className="font-medium">{currentUser.name}</span>
                     </div>
                     <button
                         onClick={handleRefresh}
                         disabled={isRefreshing}
-                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors flex items-center"
+                        className="p-2 text-stone-400 hover:text-coffee-600 hover:bg-coffee-50 rounded-lg transition-colors flex items-center"
                         title="Refresh Room"
                     >
                         <RefreshCw className={`w-5 h-5 sm:mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -157,7 +157,7 @@ export default function PokerBoard() {
                     </button>
                     <button
                         onClick={handleLeave}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center"
+                        className="p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center"
                         title="Leave Room"
                     >
                         <LogOut className="w-5 h-5 sm:mr-1" />

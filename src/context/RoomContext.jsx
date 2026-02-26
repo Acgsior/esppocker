@@ -13,6 +13,7 @@ export const RoomProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [actionBubble, setActionBubble] = useState(null);
+    const [hoveredVote, setHoveredVote] = useState(null);
     const channelRef = useRef(null);
     const navigate = useNavigate();
 
@@ -291,6 +292,8 @@ export const RoomProvider = ({ children }) => {
         loading,
         error,
         actionBubble,
+        hoveredVote,
+        setHoveredVote,
         createRoom,
         joinRoom,
         checkSession,

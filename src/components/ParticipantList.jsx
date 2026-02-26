@@ -3,80 +3,104 @@ import { useRoom } from '../context/RoomContext';
 import { Check, Loader2 } from 'lucide-react';
 
 export default function ParticipantList() {
-    const { participants, currentRoom, actionBubble } = useRoom();
+    const { participants, currentRoom, actionBubble, hoveredVote } = useRoom();
 
     const isRevealed = currentRoom?.status === 'revealed';
 
     // Calculate stats
+    const votedParticipants = participants.filter(p => p.vote !== null);
     const totalParticipants = participants.length;
-    const votedCount = participants.filter(p => p.vote !== null).length;
+    const votedCount = votedParticipants.length;
+
+    // Determine the highest vote(s)
+    let highestVotes = new Set();
+    if (isRevealed && votedCount > 0) {
+        const counts = {};
+        votedParticipants.forEach(p => {
+            counts[p.vote] = (counts[p.vote] || 0) + 1;
+        });
+        const maxCount = Math.max(...Object.values(counts));
+        highestVotes = new Set(Object.keys(counts).filter(k => counts[k] === maxCount));
+    }
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-gray-800">The Table</h2>
-                <span className="text-sm font-medium bg-gray-100 text-gray-600 py-1 px-3 rounded-full">
+                <h2 className="text-xl font-bold text-stone-800">The Table</h2>
+                <span className="text-sm font-medium bg-stone-100 text-stone-600 py-1 px-3 rounded-full">
                     {votedCount} / {totalParticipants} Voted
                 </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {participants.length === 0 ? (
-                    <div className="col-span-full py-8 text-center text-gray-500 text-sm">
+                    <div className="col-span-full py-8 text-center text-stone-500 text-sm">
                         Waiting for players to join...
                     </div>
                 ) : (
                     participants.map((participant) => {
                         const hasVoted = participant.vote !== null;
+                        const isHighest = isRevealed && hasVoted && highestVotes.has(participant.vote);
+                        const isHovered = isRevealed && hoveredVote !== null && hoveredVote === participant.vote;
 
                         return (
                             <div
                                 key={participant.id}
-                                className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all ${hasVoted
-                                    ? 'border-indigo-100 bg-indigo-50/30'
-                                    : 'border-dashed border-gray-200 bg-gray-50/50'
+                                className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-500 ${isHovered
+                                    ? 'border-coffee-300 bg-coffee-100 shadow-md shadow-coffee-200/50 -translate-y-1 scale-105 z-10'
+                                    : isHighest
+                                        ? 'border-coffee-300 bg-coffee-50'
+                                        : hasVoted
+                                            ? 'border-coffee-100 bg-coffee-50/30'
+                                            : 'border-dashed border-stone-200 bg-stone-50/50'
                                     }`}
                             >
                                 {/* The "Card" on the table */}
                                 <div
-                                    className={`w-12 h-16 rounded-md shadow-sm mb-3 flex items-center justify-center transition-all duration-500 ${isRevealed && hasVoted ? 'bg-indigo-600 [transform:rotateY(180deg)]' :
-                                        hasVoted ? 'bg-indigo-200 border-2 border-indigo-300' :
-                                            'bg-white border border-gray-200'
+                                    className={`w-12 h-16 rounded-md shadow-sm mb-3 flex items-center justify-center transition-all duration-500 ${isRevealed && hasVoted
+                                        ? (isHighest ? 'bg-coffee-500 shadow-coffee-300 shadow-lg ring-2 ring-coffee-400 ring-offset-2 [transform:rotateY(180deg)]' : 'bg-coffee-600 [transform:rotateY(180deg)] opacity-80')
+                                        : hasVoted ? 'bg-coffee-200 border-2 border-coffee-300' :
+                                            'bg-white border border-stone-200'
                                         }`}
                                     style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
                                 >
                                     {isRevealed && hasVoted ? (
-                                        <div className="text-white font-bold text-lg select-none" style={{ transform: 'rotateY(180deg)' }}>
+                                        <div className={`font-bold select-none transition-all duration-500 ${isHighest ? 'text-white text-2xl drop-shadow-md' : 'text-stone-200 text-lg'}`} style={{ transform: 'rotateY(180deg)' }}>
                                             {participant.vote}
                                         </div>
                                     ) : hasVoted ? (
-                                        <Check className="w-5 h-5 text-indigo-500" />
+                                        <Check className="w-5 h-5 text-coffee-500" />
                                     ) : (
-                                        <Loader2 className="w-4 h-4 text-gray-300 animate-spin" />
+                                        <Loader2 className="w-4 h-4 text-stone-300 animate-spin" />
                                     )}
                                 </div>
 
                                 {/* Participant Name */}
-                                <span className="text-sm font-medium text-gray-700 truncate w-full text-center">
+                                <span className="text-sm font-medium text-stone-700 truncate w-full text-center">
                                     {participant.name}
                                 </span>
 
                                 {/* Status indicator pill */}
-                                <span className={`text-[10px] uppercase tracking-wider font-bold mt-1 px-2 py-0.5 rounded-full ${hasVoted ? 'text-indigo-600 bg-indigo-100' : 'text-gray-500 bg-gray-200'
+                                <span className={`text-[10px] uppercase tracking-wider font-bold mt-1 px-2 py-0.5 rounded-full transition-colors duration-500 ${isRevealed
+                                    ? (isHighest ? 'text-orange-800 bg-orange-200 shadow-sm' : (hasVoted ? 'text-stone-500 bg-stone-100' : 'text-stone-400 bg-stone-100 opacity-50'))
+                                    : (hasVoted ? 'text-coffee-600 bg-coffee-100' : 'text-stone-500 bg-stone-200 animate-pulse')
                                     }`}>
-                                    {hasVoted ? 'Ready' : 'Thinking'}
+                                    {isRevealed
+                                        ? (isHighest ? 'Top Pick' : (hasVoted ? 'Voted' : 'Skipped'))
+                                        : (hasVoted ? 'Ready' : 'Thinking')
+                                    }
                                 </span>
 
                                 {/* Action Bubble */}
                                 {actionBubble?.userId === participant.id && (
                                     <div className="absolute -top-10 right-0 z-10 animate-float-up pointer-events-none drop-shadow-md">
-                                        <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 ${actionBubble.type === 'start' ? 'bg-green-500' : 'bg-indigo-600'}`}>
+                                        <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}>
                                             {actionBubble.type === 'start' ? (
                                                 <><span className="text-sm">🔄</span><span>Start New!</span></>
                                             ) : (
                                                 <><span className="text-sm">🤘</span><span>Open!</span></>
                                             )}
-                                            <div className={`absolute w-2 h-2 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom ${actionBubble.type === 'start' ? 'bg-green-500' : 'bg-indigo-600'}`}></div>
+                                            <div className={`absolute w-2 h-2 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}></div>
                                         </div>
                                     </div>
                                 )}

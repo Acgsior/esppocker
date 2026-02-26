@@ -7,14 +7,15 @@ export default function CardDeck() {
     if (!currentRoom || !currentUser) return null;
 
     const options = currentRoom.voting_options || [];
-    const currentVote = currentUser.vote;
     const isRevealed = currentRoom.status === 'revealed';
+    // Clear visual selection when the room is revealed
+    const currentVote = isRevealed ? null : currentUser.vote;
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 sticky top-8">
             <div className="mb-6">
-                <h2 className="text-xl font-bold text-gray-800">Your Cards</h2>
-                <p className="text-sm text-gray-500 mt-1">
+                <h2 className="text-xl font-bold text-stone-800">Your Cards</h2>
+                <p className="text-sm text-stone-500 mt-1">
                     {isRevealed ? 'Round finished.' : 'Select a card to drop your vote.'}
                 </p>
             </div>
@@ -30,14 +31,14 @@ export default function CardDeck() {
                             onClick={() => submitVote(option)}
                             className={`
                 relative aspect-[3/4] flex items-center justify-center rounded-xl p-2 transition-all duration-200
-                ${isRevealed ? 'cursor-not-allowed opacity-50 grayscale' : 'hover:-translate-y-2 hover:shadow-md cursor-pointer'}
+                ${isRevealed ? 'cursor-not-allowed opacity-50 stonescale' : 'hover:-translate-y-2 hover:shadow-md cursor-pointer'}
                 ${isSelected
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 ring-2 ring-indigo-600 ring-offset-2 scale-105'
-                                    : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-indigo-300'
+                                    ? 'bg-coffee-600 text-white shadow-lg shadow-coffee-200 ring-2 ring-coffee-600 ring-offset-2 scale-105'
+                                    : 'bg-white border-2 border-stone-200 text-stone-700 hover:border-coffee-300'
                                 }
               `}
                         >
-                            <span className={`text-xl font-bold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
+                            <span className={`text-xl font-bold ${isSelected ? 'text-white' : 'text-stone-900'}`}>
                                 {option}
                             </span>
 

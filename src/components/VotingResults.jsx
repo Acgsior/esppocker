@@ -2,7 +2,7 @@ import React from 'react';
 import { useRoom } from '../context/RoomContext';
 
 export default function VotingResults() {
-    const { participants, currentRoom } = useRoom();
+    const { participants, currentRoom, setHoveredVote } = useRoom();
 
     if (!currentRoom || currentRoom.status !== 'revealed') return null;
 
@@ -11,9 +11,9 @@ export default function VotingResults() {
 
     if (totalVotes === 0) {
         return (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Voting Results</h3>
-                <p className="text-gray-500 text-sm">No votes to display.</p>
+            <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
+                <h3 className="text-xl font-bold text-stone-800 mb-4">Voting Results</h3>
+                <p className="text-stone-500 text-sm">No votes to display.</p>
             </div>
         );
     }
@@ -36,25 +36,34 @@ export default function VotingResults() {
     const maxCount = results.length > 0 ? results[0].count : 0;
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-6">Voting Results</h3>
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
+            <h3 className="text-xl font-bold text-stone-800 mb-6">Voting Results</h3>
             <div className="space-y-4">
                 {results.map(item => {
                     const isHighest = item.count === maxCount;
-                    const badgeColor = isHighest ? 'bg-orange-100 text-orange-800' : 'bg-indigo-100 text-indigo-800';
-                    const barColor = isHighest ? 'bg-orange-500' : 'bg-indigo-500';
+                    // Using orange to represent the highest score highlight
+                    const badgeColor = isHighest ? 'bg-orange-100 text-orange-800' : 'bg-coffee-100 text-coffee-800';
+                    const barColor = isHighest ? 'bg-orange-500' : 'bg-coffee-500';
 
                     return (
-                        <div key={item.vote}>
-                            <div className="flex justify-between items-center mb-1 text-sm font-medium text-gray-700">
+                        <div
+                            key={item.vote}
+                            onMouseEnter={() => setHoveredVote && setHoveredVote(item.vote)}
+                            onMouseLeave={() => setHoveredVote && setHoveredVote(null)}
+                            className="p-3 -mx-3 rounded-xl hover:bg-stone-50 transition-colors duration-200 cursor-default"
+                        >
+                            <div className="flex justify-between items-center mb-2 text-sm font-medium text-stone-700">
                                 <div className="flex items-center gap-2">
-                                    <span className={`inline-block px-2 py-0.5 rounded font-bold min-w-[2rem] text-center ${badgeColor}`}>
+                                    <span className={`inline-block px-2.5 py-1 rounded-md font-bold min-w-[2.5rem] text-center shadow-sm ${badgeColor}`}>
                                         {item.vote}
                                     </span>
                                 </div>
-                                <span className="text-gray-500">{item.count} vote{item.count !== 1 ? 's' : ''} ({item.percentage}%)</span>
+                                <span className="text-stone-900 font-bold ml-2">
+                                    {item.count} <span className="font-normal text-stone-500 text-xs mr-1">vote{item.count !== 1 ? 's' : ''}</span>
+                                    <span className="text-coffee-700">({item.percentage}%)</span>
+                                </span>
                             </div>
-                            <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                            <div className="w-full bg-stone-100 rounded-full h-3 overflow-hidden">
                                 <div
                                     className={`${barColor} h-3 rounded-full transition-all duration-1000 ease-out`}
                                     style={{ width: `${item.percentage}%` }}
