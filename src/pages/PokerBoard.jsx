@@ -137,7 +137,7 @@ export default function PokerBoard() {
                 <div>
                     <h1 className="text-xl font-bold text-stone-900">{currentRoom.name}</h1>
                     <div className="flex items-center text-sm text-stone-500 mt-1">
-                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${currentRoom.status === 'voting' ? 'bg-green-500 animate-pulse' : 'bg-blue-500'}`}></span>
+                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${currentRoom.status === 'voting' ? 'bg-green-500 animate-pulse' : 'bg-orange-500'}`}></span>
                         {currentRoom.status === 'voting' ? 'Voting in progress' : 'Cards revealed'}
                     </div>
                 </div>
