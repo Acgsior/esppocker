@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRoom } from '../context/RoomContext';
+import confetti from 'canvas-confetti';
 
 export default function VotingResults() {
     const { participants, currentRoom, setHoveredVote } = useRoom();
@@ -35,8 +36,46 @@ export default function VotingResults() {
 
     const maxCount = results.length > 0 ? results[0].count : 0;
 
+    // Check for consensus (ignore 'Skip' and null)
+    const validVotes = votedParticipants.filter(p => typeof p.vote === 'string' && p.vote.toLowerCase() !== 'skip');
+    const isConsensus = validVotes.length > 0 && new Set(validVotes.map(p => p.vote)).size === 1;
+
+    useEffect(() => {
+        if (isConsensus) {
+            // Trigger celebration confetti
+            const duration = 1000; // 1 second burst
+            const end = Date.now() + duration;
+
+            const frame = () => {
+                confetti({
+                    particleCount: 15,
+                    angle: 60,
+                    spread: 55,
+                    startVelocity: 30,
+                    origin: { x: 0 },
+                    colors: ['#ffc107', '#ff9800', '#ff5722', '#4caf50', '#2196f3', '#9c27b0', '#e91e63'],
+                    shapes: ['square', 'circle']
+                });
+                confetti({
+                    particleCount: 15,
+                    angle: 120,
+                    spread: 55,
+                    startVelocity: 30,
+                    origin: { x: 1 },
+                    colors: ['#ffc107', '#ff9800', '#ff5722', '#4caf50', '#2196f3', '#9c27b0', '#e91e63'],
+                    shapes: ['square', 'circle']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            };
+            frame();
+        }
+    }, [isConsensus]);
+
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 relative">
             <h3 className="text-xl font-bold text-stone-800 mb-6">Voting Results</h3>
             <div className="space-y-4">
                 {results.map(item => {
