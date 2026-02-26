@@ -12,7 +12,7 @@ export const RoomProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [revealerId, setRevealerId] = useState(null);
+    const [actionBubble, setActionBubble] = useState(null);
     const channelRef = useRef(null);
     const navigate = useNavigate();
 
@@ -191,8 +191,8 @@ export const RoomProvider = ({ children }) => {
             if (currentUser && channelRef.current) {
                 channelRef.current.send({
                     type: 'broadcast',
-                    event: 'reveal_action',
-                    payload: { userId: currentUser.id }
+                    event: 'room_action',
+                    payload: { userId: currentUser.id, type: 'reveal' }
                 });
             }
         } catch (err) {
@@ -222,6 +222,14 @@ export const RoomProvider = ({ children }) => {
             // Optimistically clear local user vote
             if (currentUser) {
                 setCurrentUser(prev => ({ ...prev, vote: null }));
+            }
+
+            if (currentUser && channelRef.current) {
+                channelRef.current.send({
+                    type: 'broadcast',
+                    event: 'room_action',
+                    payload: { userId: currentUser.id, type: 'start' }
+                });
             }
         } catch (err) {
             console.error('Failed to start new voting:', err.message);
@@ -264,9 +272,9 @@ export const RoomProvider = ({ children }) => {
                     setParticipants(prev => prev.filter(p => p.id !== payload.old.id));
                 }
             })
-            .on('broadcast', { event: 'reveal_action' }, (payload) => {
-                setRevealerId(payload.payload.userId);
-                setTimeout(() => setRevealerId(null), 4000);
+            .on('broadcast', { event: 'room_action' }, (payload) => {
+                setActionBubble(payload.payload);
+                setTimeout(() => setActionBubble(null), 4000);
             })
             .subscribe();
 
@@ -282,7 +290,7 @@ export const RoomProvider = ({ children }) => {
         currentUser,
         loading,
         error,
-        revealerId,
+        actionBubble,
         createRoom,
         joinRoom,
         checkSession,

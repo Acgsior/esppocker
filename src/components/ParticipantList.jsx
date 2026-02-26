@@ -3,7 +3,7 @@ import { useRoom } from '../context/RoomContext';
 import { Check, Loader2 } from 'lucide-react';
 
 export default function ParticipantList() {
-    const { participants, currentRoom, revealerId } = useRoom();
+    const { participants, currentRoom, actionBubble } = useRoom();
 
     const isRevealed = currentRoom?.status === 'revealed';
 
@@ -67,12 +67,16 @@ export default function ParticipantList() {
                                     {hasVoted ? 'Ready' : 'Thinking'}
                                 </span>
 
-                                {/* Reveal Action Bubble */}
-                                {revealerId === participant.id && (
+                                {/* Action Bubble */}
+                                {actionBubble?.userId === participant.id && (
                                     <div className="absolute -top-10 right-0 z-10 animate-float-up pointer-events-none drop-shadow-md">
-                                        <div className="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5">
-                                            <span className="text-sm">🤘</span><span>Open!</span>
-                                            <div className="absolute w-2 h-2 bg-indigo-600 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom"></div>
+                                        <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 ${actionBubble.type === 'start' ? 'bg-green-500' : 'bg-indigo-600'}`}>
+                                            {actionBubble.type === 'start' ? (
+                                                <><span className="text-sm">🔄</span><span>Start New!</span></>
+                                            ) : (
+                                                <><span className="text-sm">🤘</span><span>Open!</span></>
+                                            )}
+                                            <div className={`absolute w-2 h-2 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom ${actionBubble.type === 'start' ? 'bg-green-500' : 'bg-indigo-600'}`}></div>
                                         </div>
                                     </div>
                                 )}
