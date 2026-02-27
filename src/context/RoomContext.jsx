@@ -105,15 +105,13 @@ export const RoomProvider = ({ children }) => {
                 participantData = newParticipant;
             }
 
-            // 3. Save to local storage with 8-hour expiration
+            // 3. Save to cookie with 8-hour expiration
             const expiryTime = Date.now() + 8 * 60 * 60 * 1000;
-            localStorage.setItem(
-                `poker_user_${roomId}`,
-                JSON.stringify({ ...participantData, is_observer: isObserver, expires: expiryTime })
-            );
+            const userData = JSON.stringify({ ...participantData, is_observer: isObserver, expires: expiryTime });
+            document.cookie = `poker_user_${roomId}=${encodeURIComponent(userData)}; path=/; max-age=${60 * 60 * 8};`;
 
             // Save independent name for auto-fill in future forms
-            localStorage.setItem('poker_last_used_name', participantName);
+            document.cookie = `poker_last_used_name=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 24 * 30};`;
 
             // 4. Save global cookie for nickname persistence across rooms (8 hours)
             document.cookie = `poker_nickname=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 8};`;
@@ -132,14 +130,16 @@ export const RoomProvider = ({ children }) => {
 
     // Check existing session
     const checkSession = async (roomId) => {
-        const savedUser = localStorage.getItem(`poker_user_${roomId}`);
+        const matchUser = document.cookie.match(new RegExp(`(?:^|; )poker_user_${roomId}=([^;]+)`));
+        const savedUser = matchUser ? decodeURIComponent(matchUser[1]) : null;
+
         if (savedUser) {
             try {
                 const parsedUser = JSON.parse(savedUser);
 
                 // Check 8-hour expiration manually
                 if (parsedUser.expires && Date.now() > parsedUser.expires) {
-                    localStorage.removeItem(`poker_user_${roomId}`);
+                    document.cookie = `poker_user_${roomId}=; path=/; max-age=0;`;
                     throw new Error('Session expired');
                 }
 
@@ -155,11 +155,11 @@ export const RoomProvider = ({ children }) => {
                     setCurrentUser(data);
                     return true;
                 } else {
-                    localStorage.removeItem(`poker_user_${roomId}`);
+                    document.cookie = `poker_user_${roomId}=; path=/; max-age=0;`;
                     setCurrentUser(null);
                 }
             } catch (e) {
-                localStorage.removeItem(`poker_user_${roomId}`);
+                document.cookie = `poker_user_${roomId}=; path=/; max-age=0;`;
             }
         }
 

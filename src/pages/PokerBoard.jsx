@@ -31,7 +31,8 @@ export default function PokerBoard() {
     const navigate = useNavigate();
     const { currentRoom, currentUser, loadRoomData, checkSession, joinRoom, leaveRoom, broadcastRefresh, loading, error } = useRoom();
     const [nickname, setNickname] = useState(() => {
-        return localStorage.getItem('poker_last_used_name') || '';
+        const match = document.cookie.match(/(?:^|; )poker_last_used_name=([^;]+)/);
+        return match ? decodeURIComponent(match[1]) : '';
     });
     const [isObserver, setIsObserver] = useState(false);
     const [joining, setJoining] = useState(false);
@@ -65,7 +66,7 @@ export default function PokerBoard() {
         if (currentUser) {
             await leaveRoom(currentUser.id);
         }
-        localStorage.removeItem(`poker_user_${roomId}`);
+        document.cookie = `poker_user_${roomId}=; path=/; max-age=0;`;
         document.cookie = 'poker_nickname=; path=/; max-age=0;';
         navigate('/');
     };
