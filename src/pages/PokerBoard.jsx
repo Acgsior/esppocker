@@ -5,13 +5,27 @@ import CardDeck from '../components/CardDeck';
 import ParticipantList from '../components/ParticipantList';
 import RoomControls from '../components/RoomControls';
 import VotingResults from '../components/VotingResults';
-import { User, LogOut, RefreshCw, Copy, Check } from 'lucide-react';
+import { User, LogOut, RefreshCw, Copy, Check, Eye } from 'lucide-react';
+
+const PRESET_NAMES = [
+    'Alice',
+    'Bob',
+    'Charlie',
+    'David',
+    'Eve',
+    'Frank',
+    'Grace',
+    'Heidi',
+    'Ivan',
+    'Judy'
+];
 
 export default function PokerBoard() {
     const { id: roomId } = useParams();
     const navigate = useNavigate();
-    const { currentRoom, currentUser, loadRoomData, checkSession, joinRoom, loading, error } = useRoom();
+    const { currentRoom, currentUser, loadRoomData, checkSession, joinRoom, leaveRoom, broadcastRefresh, loading, error } = useRoom();
     const [nickname, setNickname] = useState('');
+    const [isObserver, setIsObserver] = useState(false);
     const [joining, setJoining] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
@@ -35,11 +49,14 @@ export default function PokerBoard() {
         if (!nickname.trim()) return;
 
         setJoining(true);
-        const success = await joinRoom(roomId, nickname.trim());
+        const success = await joinRoom(roomId, nickname.trim(), isObserver);
         setJoining(false);
     };
 
-    const handleLeave = () => {
+    const handleLeave = async () => {
+        if (currentUser) {
+            await leaveRoom(currentUser.id);
+        }
         localStorage.removeItem(`poker_user_${roomId}`);
         document.cookie = 'poker_nickname=; path=/; max-age=0;';
         navigate('/');
@@ -48,6 +65,7 @@ export default function PokerBoard() {
     const handleRefresh = async () => {
         setIsRefreshing(true);
         await loadRoomData(roomId);
+        broadcastRefresh();
         setIsRefreshing(false);
     };
 
@@ -110,13 +128,43 @@ export default function PokerBoard() {
                             <input
                                 id="nickname"
                                 type="text"
+                                list="preset-names"
                                 required
-                                placeholder="e.g. John Doe"
+                                placeholder="Select or enter your name"
                                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none"
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
                             />
+                            <datalist id="preset-names">
+                                {PRESET_NAMES.map(name => (
+                                    <option key={name} value={name} />
+                                ))}
+                            </datalist>
                         </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4 p-3 bg-stone-50 rounded-lg border border-stone-200">
+                        <div className="flex items-center text-sm text-stone-700 select-none">
+                            <Eye className="w-4 h-4 mr-2 text-stone-400" />
+                            <div>
+                                <p className="font-medium">Join as Observer</p>
+                                <p className="text-xs text-stone-500">You won't participate in voting</p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            role="switch"
+                            aria-checked={isObserver}
+                            onClick={() => setIsObserver(!isObserver)}
+                            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-coffee-500 focus:ring-offset-2 ${isObserver ? 'bg-coffee-600' : 'bg-stone-300'
+                                }`}
+                        >
+                            <span
+                                aria-hidden="true"
+                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isObserver ? 'translate-x-5' : 'translate-x-0'
+                                    }`}
+                            />
+                        </button>
                     </div>
 
                     <button

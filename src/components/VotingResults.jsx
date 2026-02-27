@@ -7,7 +7,7 @@ export default function VotingResults() {
 
     if (!currentRoom || currentRoom.status !== 'revealed') return null;
 
-    const votedParticipants = participants.filter(p => p.vote !== null);
+    const votedParticipants = participants.filter(p => p.vote !== null && !p.is_observer);
     const totalVotes = votedParticipants.length;
 
     if (totalVotes === 0) {

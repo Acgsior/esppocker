@@ -1,15 +1,19 @@
 import React from 'react';
 import { useRoom } from '../context/RoomContext';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, Eye, Users } from 'lucide-react';
 
 export default function ParticipantList() {
-    const { participants, currentRoom, actionBubble, hoveredVote } = useRoom();
+    const { participants, currentUser, currentRoom, actionBubble, hoveredVote } = useRoom();
 
     const isRevealed = currentRoom?.status === 'revealed';
 
+    // Split voters and observers
+    const voters = participants.filter(p => !p.is_observer);
+    const observers = participants.filter(p => p.is_observer);
+
     // Calculate stats
-    const votedParticipants = participants.filter(p => p.vote !== null);
-    const totalParticipants = participants.length;
+    const votedParticipants = voters.filter(p => p.vote !== null);
+    const totalParticipants = voters.length;
     const votedCount = votedParticipants.length;
 
     // Determine the highest vote(s)
@@ -25,23 +29,30 @@ export default function ParticipantList() {
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-            <div className="flex justify-between items-center mb-6">
+            <div className="mb-6">
                 <h2 className="text-xl font-bold text-stone-800">The Table</h2>
-                <span className="text-sm font-medium bg-stone-100 text-stone-600 py-1 px-3 rounded-full">
-                    {votedCount} / {totalParticipants} Voted
-                </span>
+                <div className="flex justify-between items-center mt-2">
+                    <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider flex items-center">
+                        <Users className="w-4 h-4 mr-2" />
+                        Voters
+                    </h3>
+                    <span className="text-sm font-medium bg-stone-100 text-stone-600 py-1 px-3 rounded-full">
+                        {votedCount} / {totalParticipants} Voted
+                    </span>
+                </div>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {participants.length === 0 ? (
+                {voters.length === 0 ? (
                     <div className="col-span-full py-8 text-center text-stone-500 text-sm">
                         Waiting for players to join...
                     </div>
                 ) : (
-                    participants.map((participant) => {
+                    voters.map((participant) => {
                         const hasVoted = participant.vote !== null;
                         const isHighest = isRevealed && hasVoted && highestVotes.has(participant.vote);
                         const isHovered = isRevealed && hoveredVote !== null && hoveredVote === participant.vote;
+                        const isCurrentUser = currentUser?.id === participant.id;
 
                         return (
                             <div
@@ -53,7 +64,7 @@ export default function ParticipantList() {
                                         : hasVoted
                                             ? 'border-coffee-100 bg-coffee-50/30'
                                             : 'border-dashed border-stone-200 bg-stone-50/50'
-                                    }`}
+                                    } ${isCurrentUser ? 'ring-2 ring-coffee-500 ring-offset-2' : ''}`}
                             >
                                 {/* The "Card" on the table */}
                                 <div
@@ -77,7 +88,7 @@ export default function ParticipantList() {
 
                                 {/* Participant Name */}
                                 <span className="text-sm font-medium text-stone-700 truncate w-full text-center">
-                                    {participant.name}
+                                    {participant.name} {isCurrentUser && <span className="text-coffee-600 font-bold ml-1">(You)</span>}
                                 </span>
 
                                 {/* Status indicator pill */}
@@ -109,6 +120,44 @@ export default function ParticipantList() {
                     })
                 )}
             </div>
+
+            {observers.length > 0 && (
+                <div className="mt-8 pt-6 border-t border-stone-100">
+                    <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider mb-4 flex items-center">
+                        <Eye className="w-4 h-4 mr-2" />
+                        Observers
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                        {observers.map(observer => {
+                            const isCurrentUser = currentUser?.id === observer.id;
+                            return (
+                                <div key={observer.id} className={`relative flex items-center bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 ${isCurrentUser ? 'ring-2 ring-coffee-500' : ''}`}>
+                                    <div className="w-6 h-6 rounded-full bg-stone-200 flex items-center justify-center mr-2">
+                                        <span className="text-xs font-bold text-stone-600">{observer.name.charAt(0).toUpperCase()}</span>
+                                    </div>
+                                    <span className="text-sm font-medium text-stone-700">
+                                        {observer.name} {isCurrentUser && <span className="text-coffee-600 font-bold ml-1">(You)</span>}
+                                    </span>
+
+                                    {/* Action Bubble for Observers */}
+                                    {actionBubble?.userId === observer.id && (
+                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-10 animate-float-up pointer-events-none drop-shadow-md">
+                                            <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 whitespace-nowrap ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}>
+                                                {actionBubble.type === 'start' ? (
+                                                    <><span className="text-sm">🔄</span><span>Start New!</span></>
+                                                ) : (
+                                                    <><span className="text-sm">🤘</span><span>Open!</span></>
+                                                )}
+                                                <div className={`absolute w-2 h-2 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}></div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

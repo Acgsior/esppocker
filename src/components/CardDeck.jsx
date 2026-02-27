@@ -8,6 +8,22 @@ export default function CardDeck() {
 
     if (!currentRoom || !currentUser) return null;
 
+    if (currentUser.is_observer) {
+        return (
+            <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 sticky top-8 text-center">
+                <div className="flex flex-col items-center justify-center space-y-4 py-8">
+                    <div className="bg-stone-50 p-4 rounded-full border border-stone-100">
+                        <Eye className="w-8 h-8 text-stone-400" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-bold text-stone-800">Spectator Mode</h2>
+                        <p className="text-sm text-stone-500 mt-2">You are observing this room. Your vote is not required.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     const options = currentRoom.voting_options || [];
     const isRevealed = currentRoom.status === 'revealed';
     // Clear visual selection when the room is revealed

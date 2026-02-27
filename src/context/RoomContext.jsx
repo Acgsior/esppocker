@@ -52,7 +52,7 @@ export const RoomProvider = ({ children }) => {
     };
 
     // Join a room and create a participant
-    const joinRoom = async (roomId, participantName) => {
+    const joinRoom = async (roomId, participantName, isObserver = false) => {
         setLoading(true);
         setError(null);
         try {
@@ -65,17 +65,48 @@ export const RoomProvider = ({ children }) => {
 
             if (roomError || !roomData) throw new Error('Room not found or invalid.');
 
-            // 2. Add participant
-            const { data: participantData, error: participantError } = await supabase
+            // 2. Add or Update participant
+            const { data: existingParticipants, error: existingError } = await supabase
                 .from('participants')
-                .insert([{ room_id: roomId, name: participantName }])
-                .select()
-                .single();
+                .select('*')
+                .eq('room_id', roomId)
+                .eq('name', participantName)
+                .order('joined_at', { ascending: true });
 
-            if (participantError) throw participantError;
+            if (existingError) throw existingError;
+
+            let participantData;
+            if (existingParticipants && existingParticipants.length > 0) {
+                // Update the first one to reuse it
+                const { data: updated, error: updateError } = await supabase
+                    .from('participants')
+                    .update({ is_observer: isObserver })
+                    .eq('id', existingParticipants[0].id)
+                    .select()
+                    .single();
+
+                if (updateError) throw updateError;
+                participantData = updated;
+
+                // Cleanup any dirty duplicate records
+                if (existingParticipants.length > 1) {
+                    const idsToDelete = existingParticipants.slice(1).map(p => p.id);
+                    await supabase.from('participants').delete().in('id', idsToDelete);
+                }
+            } else {
+                // Insert new participant
+                const { data: newParticipant, error: participantError } = await supabase
+                    .from('participants')
+                    .insert([{ room_id: roomId, name: participantName, is_observer: isObserver }])
+                    .select()
+                    .single();
+
+                if (participantError) throw participantError;
+                participantData = newParticipant;
+            }
 
             // 3. Save to local storage
-            localStorage.setItem(`poker_user_${roomId}`, JSON.stringify(participantData));
+            localStorage.setItem(`poker_user_${roomId}`, JSON.stringify({ ...participantData, is_observer: isObserver }));
 
             // 4. Save global cookie for nickname persistence across rooms
             document.cookie = `poker_nickname=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 24 * 30};`;
@@ -158,6 +189,25 @@ export const RoomProvider = ({ children }) => {
             setError(err.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const leaveRoom = async (participantId) => {
+        try {
+            await supabase.from('participants').delete().eq('id', participantId);
+            setCurrentUser(null);
+        } catch (err) {
+            console.error('Failed to leave room:', err.message);
+        }
+    };
+
+    const broadcastRefresh = () => {
+        if (channelRef.current) {
+            channelRef.current.send({
+                type: 'broadcast',
+                event: 'force_refresh',
+                payload: {}
+            });
         }
     };
 
@@ -277,6 +327,9 @@ export const RoomProvider = ({ children }) => {
                 setActionBubble(payload.payload);
                 setTimeout(() => setActionBubble(null), 4000);
             })
+            .on('broadcast', { event: 'force_refresh' }, () => {
+                loadRoomData(currentRoom.id);
+            })
             .subscribe();
 
         return () => {
@@ -296,8 +349,10 @@ export const RoomProvider = ({ children }) => {
         setHoveredVote,
         createRoom,
         joinRoom,
+        leaveRoom,
         checkSession,
         loadRoomData,
+        broadcastRefresh,
         submitVote,
         revealCards,
         startNewVoting

@@ -37,7 +37,7 @@ export default function CreateRoom() {
         <div className="max-w-md w-full mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-stone-100">
             <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold tracking-tight text-stone-900 mb-2">Espresso Grooming Poker</h1>
-                <p className="text-stone-500">Roadmap Team 1</p>
+                <p className="text-stone-500">FOR Roadmap Team 1</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
