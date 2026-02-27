@@ -24,7 +24,9 @@ export default function PokerBoard() {
     const { id: roomId } = useParams();
     const navigate = useNavigate();
     const { currentRoom, currentUser, loadRoomData, checkSession, joinRoom, leaveRoom, broadcastRefresh, loading, error } = useRoom();
-    const [nickname, setNickname] = useState('');
+    const [nickname, setNickname] = useState(() => {
+        return localStorage.getItem('poker_last_used_name') || '';
+    });
     const [isObserver, setIsObserver] = useState(false);
     const [joining, setJoining] = useState(false);
     const [isReady, setIsReady] = useState(false);
@@ -119,7 +121,7 @@ export default function PokerBoard() {
                 <form onSubmit={handleJoin} className="space-y-6">
                     <div>
                         <label htmlFor="nickname" className="block text-sm font-medium text-stone-700 mb-1">
-                            Your Nickname
+                            Your Name
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -131,10 +133,16 @@ export default function PokerBoard() {
                                 list="preset-names"
                                 required
                                 placeholder="Select or enter your name"
-                                className="w-full pl-10 pr-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none"
+                                className="w-full pl-10 pr-10 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-8 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer z-10 bg-transparent"
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
                             />
+                            {/* Custom caret icon appearing behind the invisible native invisible indicator */}
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none z-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400">
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </div>
                             <datalist id="preset-names">
                                 {PRESET_NAMES.map(name => (
                                     <option key={name} value={name} />
@@ -191,14 +199,14 @@ export default function PokerBoard() {
             <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-stone-100">
                 <div>
                     <h1 className="text-xl font-bold text-stone-900">{currentRoom.name}</h1>
-                    <div className="flex items-center text-sm text-stone-500 mt-1">
+                    <div className="flex items-center text-sm font-medium text-stone-600 mt-1">
                         <span className={`inline-block w-2 h-2 rounded-full mr-2 ${currentRoom.status === 'voting' ? 'bg-green-500 animate-pulse' : 'bg-orange-500'}`}></span>
                         {currentRoom.status === 'voting' ? 'Voting in progress' : 'Cards revealed'}
 
                         <span className="mx-2 text-stone-300">|</span>
                         <button
                             onClick={handleCopyUrl}
-                            className={`flex items-center gap-1 transition-colors ${copied ? 'text-green-600' : 'text-stone-400 hover:text-coffee-600'}`}
+                            className={`flex items-center gap-1 transition-colors ${copied ? 'text-green-600' : 'text-stone-500 hover:text-coffee-700'}`}
                             title="Copy Room Link"
                         >
                             {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
@@ -214,19 +222,19 @@ export default function PokerBoard() {
                     <button
                         onClick={handleRefresh}
                         disabled={isRefreshing}
-                        className="p-2 text-stone-400 hover:text-coffee-600 hover:bg-coffee-50 rounded-lg transition-colors flex items-center"
+                        className="p-2 text-stone-500 hover:text-coffee-700 hover:bg-coffee-50 rounded-lg transition-colors flex items-center"
                         title="Refresh Room"
                     >
                         <RefreshCw className={`w-5 h-5 sm:mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-                        <span className="hidden sm:inline text-sm font-medium">Refresh</span>
+                        <span className="hidden sm:inline text-sm font-bold">Refresh</span>
                     </button>
                     <button
                         onClick={handleLeave}
-                        className="p-2 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center"
+                        className="p-2 text-stone-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex items-center"
                         title="Leave Room"
                     >
                         <LogOut className="w-5 h-5 sm:mr-1" />
-                        <span className="hidden sm:inline text-sm font-medium">Leave</span>
+                        <span className="hidden sm:inline text-sm font-bold">Leave</span>
                     </button>
                 </div>
             </header>

@@ -76,7 +76,10 @@ export default function ParticipantList() {
                                     style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
                                 >
                                     {isRevealed && hasVoted ? (
-                                        <div className={`font-bold select-none transition-all duration-500 ${isHighest ? 'text-white text-2xl drop-shadow-md' : 'text-stone-200 text-lg'}`} style={{ transform: 'rotateY(180deg)' }}>
+                                        <div className={`font-bold select-none transition-all duration-500 tracking-tight ${isHighest
+                                                ? (participant.vote.length > 3 ? 'text-white text-xl drop-shadow-md' : 'text-white text-2xl drop-shadow-md')
+                                                : (participant.vote.length > 3 ? 'text-stone-200 text-base' : 'text-stone-200 text-lg')
+                                            }`} style={{ transform: 'rotateY(180deg)' }}>
                                             {participant.vote}
                                         </div>
                                     ) : hasVoted ? (
@@ -104,8 +107,8 @@ export default function ParticipantList() {
 
                                 {/* Action Bubble */}
                                 {actionBubble?.userId === participant.id && (
-                                    <div className="absolute -top-10 right-0 z-10 animate-float-up pointer-events-none drop-shadow-md">
-                                        <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}>
+                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-10 animate-float-up pointer-events-none drop-shadow-md">
+                                        <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 whitespace-nowrap ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}>
                                             {actionBubble.type === 'start' ? (
                                                 <><span className="text-sm">🔄</span><span>Start New!</span></>
                                             ) : (

@@ -5,9 +5,49 @@ import confetti from 'canvas-confetti';
 export default function VotingResults() {
     const { participants, currentRoom, setHoveredVote } = useRoom();
 
-    if (!currentRoom || currentRoom.status !== 'revealed') return null;
+    const isRevealed = currentRoom?.status === 'revealed';
 
-    const votedParticipants = participants.filter(p => p.vote !== null && !p.is_observer);
+    const votedParticipants = participants ? participants.filter(p => p.vote !== null && !p.is_observer) : [];
+    const validVotes = votedParticipants.filter(p => typeof p.vote === 'string' && p.vote.toLowerCase() !== 'skip');
+    const isConsensus = validVotes.length > 0 && new Set(validVotes.map(p => p.vote)).size === 1;
+    const shouldCelebrate = isRevealed && isConsensus;
+
+    useEffect(() => {
+        if (shouldCelebrate) {
+            // Trigger celebration confetti
+            const duration = 1000; // 1 second burst
+            const end = Date.now() + duration;
+
+            const frame = () => {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 80,
+                    startVelocity: 15,
+                    origin: { x: 0 },
+                    colors: ['#ffc107', '#4caf50', '#2196f3', '#e91e63'],
+                    shapes: ['square', 'circle']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 80,
+                    startVelocity: 15,
+                    origin: { x: 1 },
+                    colors: ['#ffc107', '#4caf50', '#2196f3', '#e91e63'],
+                    shapes: ['square', 'circle']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            };
+            frame();
+        }
+    }, [shouldCelebrate]);
+
+    if (!isRevealed) return null;
+
     const totalVotes = votedParticipants.length;
 
     if (totalVotes === 0) {
@@ -35,44 +75,6 @@ export default function VotingResults() {
         .sort((a, b) => b.count - a.count);
 
     const maxCount = results.length > 0 ? results[0].count : 0;
-
-    // Check for consensus (ignore 'Skip' and null)
-    const validVotes = votedParticipants.filter(p => typeof p.vote === 'string' && p.vote.toLowerCase() !== 'skip');
-    const isConsensus = validVotes.length > 0 && new Set(validVotes.map(p => p.vote)).size === 1;
-
-    useEffect(() => {
-        if (isConsensus) {
-            // Trigger celebration confetti
-            const duration = 1000; // 1 second burst
-            const end = Date.now() + duration;
-
-            const frame = () => {
-                confetti({
-                    particleCount: 15,
-                    angle: 60,
-                    spread: 55,
-                    startVelocity: 30,
-                    origin: { x: 0 },
-                    colors: ['#ffc107', '#ff9800', '#ff5722', '#4caf50', '#2196f3', '#9c27b0', '#e91e63'],
-                    shapes: ['square', 'circle']
-                });
-                confetti({
-                    particleCount: 15,
-                    angle: 120,
-                    spread: 55,
-                    startVelocity: 30,
-                    origin: { x: 1 },
-                    colors: ['#ffc107', '#ff9800', '#ff5722', '#4caf50', '#2196f3', '#9c27b0', '#e91e63'],
-                    shapes: ['square', 'circle']
-                });
-
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            };
-            frame();
-        }
-    }, [isConsensus]);
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 relative">

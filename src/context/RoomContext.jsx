@@ -105,11 +105,18 @@ export const RoomProvider = ({ children }) => {
                 participantData = newParticipant;
             }
 
-            // 3. Save to local storage
-            localStorage.setItem(`poker_user_${roomId}`, JSON.stringify({ ...participantData, is_observer: isObserver }));
+            // 3. Save to local storage with 8-hour expiration
+            const expiryTime = Date.now() + 8 * 60 * 60 * 1000;
+            localStorage.setItem(
+                `poker_user_${roomId}`,
+                JSON.stringify({ ...participantData, is_observer: isObserver, expires: expiryTime })
+            );
 
-            // 4. Save global cookie for nickname persistence across rooms
-            document.cookie = `poker_nickname=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 24 * 30};`;
+            // Save independent name for auto-fill in future forms
+            localStorage.setItem('poker_last_used_name', participantName);
+
+            // 4. Save global cookie for nickname persistence across rooms (8 hours)
+            document.cookie = `poker_nickname=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 8};`;
 
             setCurrentRoom(roomData);
             setCurrentUser(participantData);
@@ -129,6 +136,12 @@ export const RoomProvider = ({ children }) => {
         if (savedUser) {
             try {
                 const parsedUser = JSON.parse(savedUser);
+
+                // Check 8-hour expiration manually
+                if (parsedUser.expires && Date.now() > parsedUser.expires) {
+                    localStorage.removeItem(`poker_user_${roomId}`);
+                    throw new Error('Session expired');
+                }
 
                 // Verify user still exists in DB and matches room and name
                 const { data, error } = await supabase
@@ -319,6 +332,7 @@ export const RoomProvider = ({ children }) => {
                     setParticipants(prev => [...prev, payload.new]);
                 } else if (payload.eventType === 'UPDATE') {
                     setParticipants(prev => prev.map(p => p.id === payload.new.id ? payload.new : p));
+                    setCurrentUser(prevUser => (prevUser && prevUser.id === payload.new.id) ? payload.new : prevUser);
                 } else if (payload.eventType === 'DELETE') {
                     setParticipants(prev => prev.filter(p => p.id !== payload.old.id));
                 }
