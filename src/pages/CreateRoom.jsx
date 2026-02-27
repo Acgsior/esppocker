@@ -34,9 +34,9 @@ export default function CreateRoom() {
     };
 
     return (
-        <div className="max-w-md w-full mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-stone-100">
+        <div className="max-w-lg w-full mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-stone-100">
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-stone-900 mb-2">Espresso Grooming Poker</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-stone-900 mb-2">Espresso Grooming Poker v3</h1>
                 <p className="text-stone-500">FOR Roadmap Team 1</p>
             </div>
 

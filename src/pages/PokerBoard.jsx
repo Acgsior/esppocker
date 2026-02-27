@@ -100,16 +100,15 @@ export default function PokerBoard() {
 
     if (error || !currentRoom) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-                <div className="bg-red-50 text-red-700 p-6 rounded-lg max-w-md w-full border border-red-100">
-                    <h2 className="text-xl font-bold mb-2">Room not found</h2>
-                    <p className="mb-6">{error || "The room you are looking for doesn't exist or has been removed."}</p>
-                    <button
-                        onClick={() => navigate('/')}
-                        className="w-full py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
-                    >
-                        Return Home
-                    </button>
+            <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center bg-stone-50/50">
+                <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-stone-200">
+                    <div className="w-16 h-16 bg-coffee-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="text-3xl">☕</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-stone-900 mb-3">Room not found</h2>
+                    <p className="text-stone-600 leading-relaxed">
+                        {error || "The room you are looking for doesn't exist or has been removed."}
+                    </p>
                 </div>
             </div>
         );

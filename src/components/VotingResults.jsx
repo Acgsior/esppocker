@@ -95,20 +95,23 @@ export default function VotingResults() {
                         >
                             <div className="flex justify-between items-center mb-2 text-sm font-medium text-stone-700">
                                 <div className="flex items-center gap-2">
-                                    <span className={`inline-block px-2.5 py-1 rounded-md font-bold min-w-[2.5rem] text-center shadow-sm ${badgeColor}`}>
+                                    <span className={`inline-block px-2.5 py-1 rounded-md text-md font-bold min-w-[2.5rem] text-center shadow-sm ${badgeColor}`}>
                                         {item.vote}
                                     </span>
                                 </div>
                                 <span className="text-stone-900 font-bold ml-2">
-                                    {item.count} <span className="font-normal text-stone-500 text-xs mr-1">vote{item.count !== 1 ? 's' : ''}</span>
+                                    {item.count} <span className="font-normal text-stone-500 text-md mr-1">vote{item.count !== 1 ? 's' : ''}</span>
                                     <span className="text-coffee-700">({item.percentage}%)</span>
                                 </span>
                             </div>
                             <div className="w-full bg-stone-100 rounded-full h-3 overflow-hidden">
                                 <div
-                                    className={`${barColor} h-3 rounded-full transition-all duration-1000 ease-out`}
+                                    className={`${barColor} h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden`}
                                     style={{ width: `${item.percentage}%` }}
-                                ></div>
+                                >
+                                    {/* Shimmer overlay */}
+                                    <div className="absolute inset-0 animate-shimmer w-full h-full"></div>
+                                </div>
                             </div>
                         </div>
                     );
