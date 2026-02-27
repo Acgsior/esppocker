@@ -8,16 +8,22 @@ import VotingResults from '../components/VotingResults';
 import { User, LogOut, RefreshCw, Copy, Check, Eye } from 'lucide-react';
 
 const PRESET_NAMES = [
-    'Alice',
-    'Bob',
-    'Charlie',
-    'David',
-    'Eve',
-    'Frank',
-    'Grace',
-    'Heidi',
-    'Ivan',
-    'Judy'
+    'Ajay',
+    'Brita',
+    'Damon',
+    'Francis',
+    'Joe',
+    'John',
+    'Kevin',
+    'Liam',
+    'Morgan',
+    'Palak',
+    'Sachin',
+    'Terence',
+    'Weber',
+    'Xueqin',
+    'Yina',
+    'Zhichao'
 ];
 
 export default function PokerBoard() {
