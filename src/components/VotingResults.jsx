@@ -109,8 +109,8 @@ export default function VotingResults() {
                                     className={`${barColor} h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden`}
                                     style={{ width: `${item.percentage}%` }}
                                 >
-                                    {/* Shimmer overlay */}
-                                    <div className="absolute inset-0 animate-shimmer w-full h-full"></div>
+                                    {/* Shimmer overlay only for top votes */}
+                                    {isHighest && <div className="absolute inset-0 animate-shimmer w-full h-full"></div>}
                                 </div>
                             </div>
                         </div>
