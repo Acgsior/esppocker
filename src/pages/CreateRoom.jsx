@@ -11,7 +11,9 @@ const VOTING_TEMPLATES = {
 export default function CreateRoom() {
     const [roomName, setRoomName] = useState('');
     const [template, setTemplate] = useState('FIBONACCI');
-    const [customOptions, setCustomOptions] = useState('');
+    const [customStart, setCustomStart] = useState('1');
+    const [customMax, setCustomMax] = useState('10');
+    const [customStep, setCustomStep] = useState('1');
     const { createRoom, loading, error } = useRoom();
     const navigate = useNavigate();
 
@@ -19,10 +21,24 @@ export default function CreateRoom() {
         e.preventDefault();
         if (!roomName.trim()) return;
 
-        let optionsToUse;
+        let optionsToUse = [];
         if (template === 'CUSTOM') {
-            optionsToUse = customOptions.split(',').map(opt => opt.trim()).filter(Boolean);
+            const start = parseFloat(customStart);
+            const max = parseFloat(customMax);
+            const step = parseFloat(customStep);
+            
+            if (!isNaN(start) && !isNaN(max) && !isNaN(step) && step > 0 && start < max) {
+                // To avoid floating point precision issues, we limit decimals
+                let current = start;
+                while (current < max) {
+                    let next = current + step;
+                    if (next > max) next = max;
+                    optionsToUse.push(`${Number(current.toFixed(2))}-${Number(next.toFixed(2))}`);
+                    current = next;
+                }
+            }
             if (optionsToUse.length === 0) optionsToUse = VOTING_TEMPLATES.FIBONACCI; // Fallback
+            else optionsToUse.push('Skip'); // Default append skip for standard behaviors
         } else {
             optionsToUse = VOTING_TEMPLATES[template];
         }
@@ -104,16 +120,75 @@ export default function CreateRoom() {
                                 />
                             </div>
                             <div className="ml-3 w-full">
-                                <span className="block text-sm font-medium text-stone-900 mb-1">Custom Options</span>
+                                <span className="block text-sm font-medium text-stone-900 mb-1">Custom Range</span>
+                                <span className="block text-xs text-stone-500 mb-2">Generate a sequence by start, max, and step amounts</span>
                                 {template === 'CUSTOM' && (
-                                    <input
-                                        type="text"
-                                        placeholder="1, 2, 3, ?, Break"
-                                        className="w-full px-3 py-2 text-sm rounded-md border border-stone-300 focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none mt-1"
-                                        value={customOptions}
-                                        onChange={(e) => setCustomOptions(e.target.value)}
-                                        required={template === 'CUSTOM'}
-                                    />
+                                    <div className="space-y-3 mt-2 pr-3">
+                                        <div className="grid grid-cols-3 gap-3">
+                                            <div>
+                                                <label className="block text-xs text-stone-500 mb-1">Start</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-stone-300 focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    value={customStart}
+                                                    onChange={(e) => setCustomStart(e.target.value)}
+                                                    required={template === 'CUSTOM'}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-stone-500 mb-1">Max</label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-stone-300 focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    value={customMax}
+                                                    onChange={(e) => setCustomMax(e.target.value)}
+                                                    required={template === 'CUSTOM'}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs text-stone-500 mb-1">Step</label>
+                                                <input
+                                                    type="number"
+                                                    min="0.1"
+                                                    step="0.1"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-stone-300 focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    value={customStep}
+                                                    onChange={(e) => setCustomStep(e.target.value)}
+                                                    required={template === 'CUSTOM'}
+                                                />
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Preview */}
+                                        <div className="bg-stone-50 p-3 rounded-md border border-stone-200">
+                                            <span className="block text-xs font-bold text-stone-500 mb-1 tracking-wider uppercase">Preview</span>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {(() => {
+                                                    const s = parseFloat(customStart);
+                                                    const m = parseFloat(customMax);
+                                                    const st = parseFloat(customStep);
+                                                    const items = [];
+                                                    if (!isNaN(s) && !isNaN(m) && !isNaN(st) && st > 0 && s < m) {
+                                                        let c = s;
+                                                        while (c < m && items.length < 50) { // arbitrary limit for preview
+                                                            let next = c + st;
+                                                            if (next > m) next = m;
+                                                            items.push(`${Number(c.toFixed(2))}-${Number(next.toFixed(2))}`);
+                                                            c = next;
+                                                        }
+                                                    }
+                                                    return items.length > 0 ? (
+                                                        <>
+                                                            {items.slice(0, 10).map((v, i) => (
+                                                                <span key={i} className="inline-block px-2 py-0.5 bg-white border border-stone-200 rounded text-xs text-stone-600 font-medium shadow-sm">{v}</span>
+                                                            ))}
+                                                            {items.length > 10 && <span className="inline-block px-2 py-0.5 text-xs text-stone-400 font-medium">... ({items.length} total)</span>}
+                                                        </>
+                                                    ) : <span className="text-xs text-stone-400">Invalid range</span>;
+                                                })()}
+                                            </div>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         </label>
