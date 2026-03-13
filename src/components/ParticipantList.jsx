@@ -28,8 +28,8 @@ export default function ParticipantList() {
     }
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 max-lg:p-4 lg:p-6">
-            <div className="max-lg:mb-3 lg:mb-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 max-lg:p-4">
+            <div className="mb-6 max-lg:mb-3">
                 <h2 className="text-xl font-bold text-stone-800">The Table</h2>
                 <div className="flex justify-between items-center mt-2">
                     <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider flex items-center">
@@ -42,7 +42,7 @@ export default function ParticipantList() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 max-lg:gap-1.5 lg:gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-4 max-lg:gap-1.5">
                 {voters.length === 0 ? (
                     <div className="col-span-full py-8 text-center text-stone-500 text-sm">
                         Waiting for players to join...
@@ -57,7 +57,7 @@ export default function ParticipantList() {
                         return (
                             <div
                                 key={participant.id}
-                                className={`relative flex flex-col items-center max-lg:p-2 lg:p-4 rounded-xl border-2 transition-all duration-500 ${isHovered
+                                className={`relative flex flex-col items-center p-4 max-lg:p-2 rounded-xl border-2 transition-all duration-500 ${isHovered
                                     ? 'border-coffee-300 bg-coffee-100 shadow-md shadow-coffee-200/50 -translate-y-1 scale-105 z-10'
                                     : isHighest
                                         ? 'border-coffee-300 bg-coffee-50'
@@ -68,7 +68,7 @@ export default function ParticipantList() {
                             >
                                 {/* The "Card" on the table */}
                                 <div
-                                    className={`max-lg:w-10 max-lg:h-14 lg:w-12 lg:h-16 rounded-md shadow-sm max-lg:mb-2 lg:mb-3 flex items-center justify-center transition-all duration-500 ${isRevealed && hasVoted
+                                    className={`w-12 h-16 max-lg:w-10 max-lg:h-14 rounded-md shadow-sm mb-3 max-lg:mb-2 flex items-center justify-center transition-all duration-500 ${isRevealed && hasVoted
                                         ? (isHighest ? 'bg-coffee-500 shadow-coffee-300 shadow-lg ring-2 ring-coffee-400 ring-offset-2 [transform:rotateY(180deg)]' : 'bg-coffee-600 [transform:rotateY(180deg)] opacity-80')
                                         : hasVoted ? 'bg-coffee-200 border-2 border-coffee-300' :
                                             'bg-white border border-stone-200'
@@ -77,8 +77,8 @@ export default function ParticipantList() {
                                 >
                                     {isRevealed && hasVoted ? (
                                         <div className={`font-bold select-none transition-all duration-500 tracking-tight ${isHighest
-                                                ? (participant.vote.length > 3 ? 'text-white max-lg:text-sm lg:text-xl drop-shadow-md' : 'text-white max-lg:text-lg lg:text-2xl drop-shadow-md')
-                                                : (participant.vote.length > 3 ? 'text-stone-200 max-lg:text-xs lg:text-base' : 'text-stone-200 max-lg:text-sm lg:text-lg')
+                                                ? (participant.vote.length > 3 ? 'text-xl max-lg:text-sm text-white drop-shadow-md' : 'text-2xl max-lg:text-lg text-white drop-shadow-md')
+                                                : (participant.vote.length > 3 ? 'text-base max-lg:text-xs text-stone-200' : 'text-lg max-lg:text-sm text-stone-200')
                                             }`} style={{ transform: 'rotateY(180deg)' }}>
                                             {participant.vote}
                                         </div>
@@ -95,7 +95,7 @@ export default function ParticipantList() {
                                 </span>
 
                                 {/* Status indicator pill */}
-                                <span className={`text-[10px] max-lg:text-[9px] uppercase tracking-wider font-bold max-lg:mt-0.5 lg:mt-1 max-lg:px-1.5 lg:px-2 py-0.5 rounded-full transition-colors duration-500 ${isRevealed
+                                <span className={`text-[10px] max-lg:text-[9px] uppercase tracking-wider font-bold mt-1 max-lg:mt-0.5 px-2 max-lg:px-1.5 py-0.5 rounded-full transition-colors duration-500 ${isRevealed
                                     ? (isHighest ? 'text-orange-800 bg-orange-200 shadow-sm' : (hasVoted ? 'text-stone-500 bg-stone-100' : 'text-stone-400 bg-stone-100 opacity-50'))
                                     : (hasVoted ? 'text-coffee-600 bg-coffee-100' : 'text-stone-500 bg-stone-200 animate-pulse')
                                     }`}>
@@ -125,8 +125,8 @@ export default function ParticipantList() {
             </div>
 
             {observers.length > 0 && (
-                <div className="max-lg:mt-4 max-lg:pt-4 lg:mt-8 lg:pt-6 border-t border-stone-100">
-                    <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider max-lg:mb-2 lg:mb-4 flex items-center">
+                <div className="mt-8 pt-6 max-lg:mt-4 max-lg:pt-4 border-t border-stone-100">
+                    <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider mb-4 max-lg:mb-2 flex items-center">
                         <Eye className="w-4 h-4 mr-2" />
                         Observers
                     </h3>

@@ -200,9 +200,9 @@ export default function PokerBoard() {
 
     // Active Poker Board
     return (
-        <div className="max-w-5xl mx-auto max-lg:py-2 lg:py-8 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
+        <div className="max-w-5xl mx-auto py-8 max-lg:py-2 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
             {/* Header */}
-            <header className="flex justify-between items-center max-lg:mb-3 lg:mb-8 bg-white p-4 rounded-xl shadow-sm border border-stone-100">
+            <header className="flex justify-between items-center mb-8 max-lg:mb-3 bg-white p-4 rounded-xl shadow-sm border border-stone-100">
                 <div>
                     <h1 className="text-xl font-bold text-stone-900">{currentRoom.name}</h1>
                     <div className="flex items-center text-sm font-medium text-stone-600 mt-1">
@@ -246,10 +246,10 @@ export default function PokerBoard() {
             </header>
 
             {/* Main Content */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 max-lg:gap-3 lg:gap-8 relative">
-                <div className="lg:col-span-2 flex flex-col max-lg:gap-3 lg:gap-8 relative">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 max-lg:gap-3 relative">
+                <div className="lg:col-span-2 flex flex-col gap-8 max-lg:gap-3 relative">
                     {/* Sticky wrapper for RoomControls on mobile */}
-                    <div className="order-1 sticky top-0 z-20 -mx-4 px-4 max-lg:py-1 lg:py-0 bg-stone-50/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
+                    <div className="order-1 sticky top-0 z-20 -mx-4 px-4 max-lg:py-1 bg-stone-50/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
                         <RoomControls />
                     </div>
                     <div className="order-3 lg:order-2">
