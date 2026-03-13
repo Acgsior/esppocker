@@ -28,8 +28,8 @@ export default function ParticipantList() {
     }
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-            <div className="mb-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 max-lg:p-4 lg:p-6">
+            <div className="max-lg:mb-3 lg:mb-6">
                 <h2 className="text-xl font-bold text-stone-800">The Table</h2>
                 <div className="flex justify-between items-center mt-2">
                     <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider flex items-center">
@@ -42,7 +42,7 @@ export default function ParticipantList() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 max-lg:gap-2 lg:gap-4">
                 {voters.length === 0 ? (
                     <div className="col-span-full py-8 text-center text-stone-500 text-sm">
                         Waiting for players to join...
@@ -125,8 +125,8 @@ export default function ParticipantList() {
             </div>
 
             {observers.length > 0 && (
-                <div className="mt-8 pt-6 border-t border-stone-100">
-                    <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider mb-4 flex items-center">
+                <div className="max-lg:mt-4 max-lg:pt-4 lg:mt-8 lg:pt-6 border-t border-stone-100">
+                    <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider max-lg:mb-2 lg:mb-4 flex items-center">
                         <Eye className="w-4 h-4 mr-2" />
                         Observers
                     </h3>

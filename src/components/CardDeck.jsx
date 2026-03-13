@@ -10,15 +10,13 @@ export default function CardDeck() {
 
     if (currentUser.is_observer) {
         return (
-            <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 sticky top-8 text-center">
-                <div className="flex flex-col items-center justify-center space-y-4 py-8">
-                    <div className="bg-stone-50 p-4 rounded-full border border-stone-100">
-                        <Eye className="w-8 h-8 text-stone-400" />
-                    </div>
-                    <div>
-                        <h2 className="text-xl font-bold text-stone-800">Spectator Mode</h2>
-                        <p className="text-sm text-stone-500 mt-2">You are observing this room. Your vote is not required.</p>
-                    </div>
+            <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-4 lg:sticky lg:top-8 text-center flex items-center justify-center space-x-3">
+                <div className="bg-stone-50 p-2 rounded-full border border-stone-100 flex-shrink-0">
+                    <Eye className="w-5 h-5 text-stone-400" />
+                </div>
+                <div className="text-left">
+                    <h2 className="text-base font-bold text-stone-800">Spectator Mode</h2>
+                    <p className="text-xs text-stone-500">You are observing this room.</p>
                 </div>
             </div>
         );
@@ -59,13 +57,13 @@ export default function CardDeck() {
                 {/* Blurred Overlay when not hovered */}
                 {isPrivacyMode && (
                     <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/95 backdrop-blur-xl opacity-100 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none rounded-xl">
-                        <span className="bg-stone-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+                        <span className="bg-stone-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 ">
                             <Eye className="w-4 h-4" /> Hover to reveal
                         </span>
                     </div>
                 )}
 
-                <div className={`grid grid-cols-3 gap-3 transition-all duration-300 ${isPrivacyMode ? 'group-hover:opacity-100 opacity-0 select-none' : ''}`}>
+                <div className={`grid grid-cols-3 landscape:max-lg:flex landscape:max-lg:flex-nowrap landscape:max-lg:overflow-x-auto landscape:max-lg:gap-2 landscape:max-lg:pt-4 landscape:max-lg:pb-6 landscape:max-lg:-mx-2 landscape:max-lg:px-2 gap-3 transition-all duration-300 ${isPrivacyMode ? 'group-hover:opacity-100 opacity-0 select-none' : ''}`}>
                     {options.map((option) => {
                         const isSelected = currentVote === option;
 
@@ -76,6 +74,7 @@ export default function CardDeck() {
                                 onClick={() => submitVote(option)}
                                 className={`
                 relative aspect-[3/4] flex items-center justify-center rounded-xl p-2 transition-all duration-200
+                landscape:max-lg:flex-1 landscape:max-lg:min-w-[40px] landscape:max-lg:max-w-[72px] landscape:max-lg:p-1 landscape:max-lg:rounded-lg
                 ${isRevealed ? 'cursor-not-allowed opacity-50 grayscale' : 'hover:-translate-y-2 hover:shadow-md cursor-pointer'}
                 ${isSelected
                                         ? 'bg-coffee-600 text-white shadow-lg shadow-coffee-200 ring-2 ring-coffee-600 ring-offset-2 scale-105'
@@ -83,15 +82,15 @@ export default function CardDeck() {
                                     }
               `}
                             >
-                                <span className={`text-xl font-bold ${isSelected ? 'text-white' : 'text-stone-900'}`}>
+                                <span className={`text-xl font-bold landscape:max-lg:text-base ${isSelected ? 'text-white' : 'text-stone-900'}`}>
                                     {option}
                                 </span>
 
                                 {/* Decorative corners */}
-                                <span className={`absolute top-2 left-2 text-[10px] font-medium opacity-50 ${isSelected ? 'text-white' : ''}`}>
+                                <span className={`absolute top-2 left-2 text-[10px] landscape:max-lg:text-[8px] font-medium opacity-50 ${isSelected ? 'text-white' : ''}`}>
                                     {option}
                                 </span>
-                                <span className={`absolute bottom-2 right-2 text-[10px] font-medium opacity-50 rotate-180 ${isSelected ? 'text-white' : ''}`}>
+                                <span className={`absolute bottom-2 right-2 text-[10px] landscape:max-lg:text-[8px] font-medium opacity-50 rotate-180 ${isSelected ? 'text-white' : ''}`}>
                                     {option}
                                 </span>
                             </button>

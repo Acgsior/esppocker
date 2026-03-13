@@ -52,8 +52,8 @@ export default function VotingResults() {
 
     if (totalVotes === 0) {
         return (
-            <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-                <h3 className="text-xl font-bold text-stone-800 mb-4">Voting Results</h3>
+            <div className="bg-white rounded-2xl shadow-sm border border-stone-100 max-lg:p-4 lg:p-6">
+                <h3 className="text-xl font-bold text-stone-800 max-lg:mb-2 lg:mb-4">Voting Results</h3>
                 <p className="text-stone-500 text-sm">No votes to display.</p>
             </div>
         );
@@ -77,9 +77,9 @@ export default function VotingResults() {
     const maxCount = results.length > 0 ? results[0].count : 0;
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 relative">
-            <h3 className="text-xl font-bold text-stone-800 mb-6">Voting Results</h3>
-            <div className="space-y-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 max-lg:p-4 lg:p-6 relative">
+            <h3 className="text-xl font-bold text-stone-800 max-lg:mb-3 lg:mb-6">Voting Results</h3>
+            <div className="max-lg:space-y-2 lg:space-y-4">
                 {results.map(item => {
                     const isHighest = item.count === maxCount;
                     // Using orange to represent the highest score highlight

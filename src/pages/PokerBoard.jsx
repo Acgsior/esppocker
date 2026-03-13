@@ -5,7 +5,7 @@ import CardDeck from '../components/CardDeck';
 import ParticipantList from '../components/ParticipantList';
 import RoomControls from '../components/RoomControls';
 import VotingResults from '../components/VotingResults';
-import { User, LogOut, RefreshCw, Copy, Check, Eye } from 'lucide-react';
+import { User, LogOut, RefreshCw, Copy, Check, Eye, RotateCcw } from 'lucide-react';
 
 const PRESET_NAMES = [
     'Ajay',
@@ -29,7 +29,7 @@ const PRESET_NAMES = [
 export default function PokerBoard() {
     const { id: roomId } = useParams();
     const navigate = useNavigate();
-    const { currentRoom, currentUser, loadRoomData, checkSession, joinRoom, leaveRoom, broadcastRefresh, loading, error } = useRoom();
+    const { currentRoom, currentUser, loadRoomData, checkSession, joinRoom, leaveRoom, broadcastRefresh, loading, error, participants, revealCards, startNewVoting } = useRoom();
     const [nickname, setNickname] = useState(() => {
         const match = document.cookie.match(/(?:^|; )poker_last_used_name=([^;]+)/);
         return match ? decodeURIComponent(match[1]) : '';
@@ -200,9 +200,9 @@ export default function PokerBoard() {
 
     // Active Poker Board
     return (
-        <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
+        <div className="max-w-5xl mx-auto max-lg:py-2 lg:py-8 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
             {/* Header */}
-            <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-stone-100">
+            <header className="flex justify-between items-center max-lg:mb-3 lg:mb-8 bg-white p-4 rounded-xl shadow-sm border border-stone-100">
                 <div>
                     <h1 className="text-xl font-bold text-stone-900">{currentRoom.name}</h1>
                     <div className="flex items-center text-sm font-medium text-stone-600 mt-1">
@@ -246,16 +246,46 @@ export default function PokerBoard() {
             </header>
 
             {/* Main Content */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 flex flex-col gap-8">
-                    <RoomControls />
-                    <ParticipantList />
-                    <VotingResults />
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 max-lg:gap-3 lg:gap-8 relative">
+                <div className="lg:col-span-2 flex flex-col max-lg:gap-3 lg:gap-8 relative">
+                    {/* Sticky wrapper for RoomControls on mobile */}
+                    <div className="order-1 sticky top-0 z-20 -mx-4 px-4 py-2 bg-stone-50/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
+                        <RoomControls />
+                    </div>
+                    <div className="order-3 lg:order-2">
+                        <ParticipantList />
+                    </div>
+                    <div className="order-2 lg:order-3">
+                        <VotingResults />
+                    </div>
                 </div>
 
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 order-last">
                     <CardDeck />
                 </div>
+            </div>
+
+            {/* Floating Action Button (Mobile Only) */}
+            <div className="fixed bottom-6 right-6 z-50 lg:hidden">
+                <button
+                    onClick={() => {
+                        if (currentRoom.status === 'revealed') {
+                            startNewVoting(currentRoom.id);
+                        } else {
+                            if (participants && participants.length > 0 && participants.some(p => p.vote !== null && p.vote !== undefined)) {
+                                revealCards(currentRoom.id);
+                            }
+                        }
+                    }}
+                    disabled={currentRoom.status !== 'revealed' && (!participants || participants.length === 0 || !participants.some(p => p.vote !== null && p.vote !== undefined))}
+                    className={`p-4 rounded-full shadow-lg text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all ${currentRoom.status === 'revealed' ? 'bg-coffee-800 hover:bg-coffee-900' : 'bg-orange-500 hover:bg-orange-600'}`}
+                >
+                    {currentRoom.status === 'revealed' ? (
+                        <RotateCcw className="w-6 h-6" />
+                    ) : (
+                        <Eye className="w-6 h-6" />
+                    )}
+                </button>
             </div>
         </div>
     );

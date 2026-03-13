@@ -11,7 +11,7 @@ export default function RoomControls() {
     const hasVotes = participants && participants.length > 0 && participants.some(p => p.vote !== null && p.vote !== undefined);
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 max-lg:p-4 lg:p-6 flex flex-col sm:flex-row items-center justify-between max-lg:gap-2 lg:gap-4">
             <div>
                 <h3 className="font-semibold text-stone-900">Room Controls</h3>
                 <p className="text-sm text-stone-500">Manage the current voting round.</p>
