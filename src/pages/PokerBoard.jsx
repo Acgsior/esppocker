@@ -200,7 +200,7 @@ export default function PokerBoard() {
 
     // Active Poker Board
     return (
-        <div className="max-w-5xl mx-auto py-8 max-lg:py-2 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
+        <div className="max-w-6xl mx-auto py-8 max-lg:py-2 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
             {/* Header */}
             <header className="flex justify-between items-center mb-8 max-lg:mb-3 bg-white p-4 rounded-xl shadow-sm border border-stone-100">
                 <div>
@@ -246,8 +246,8 @@ export default function PokerBoard() {
             </header>
 
             {/* Main Content */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-8 max-lg:gap-3 relative">
-                <div className="lg:col-span-2 flex flex-col gap-8 max-lg:gap-3 relative">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-8 max-lg:gap-3 relative">
+                <div className="lg:col-span-3 flex flex-col gap-8 max-lg:gap-3 relative">
                     {/* Sticky wrapper for RoomControls on mobile */}
                     <div className="order-1 sticky top-0 z-20 -mx-4 px-4 max-lg:py-1 bg-stone-50/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
                         <RoomControls />
