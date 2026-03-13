@@ -249,7 +249,7 @@ export default function PokerBoard() {
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 max-lg:gap-3 lg:gap-8 relative">
                 <div className="lg:col-span-2 flex flex-col max-lg:gap-3 lg:gap-8 relative">
                     {/* Sticky wrapper for RoomControls on mobile */}
-                    <div className="order-1 sticky top-0 z-20 -mx-4 px-4 py-2 bg-stone-50/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
+                    <div className="order-1 sticky top-0 z-20 -mx-4 px-4 max-lg:py-1 lg:py-2 bg-stone-50/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
                         <RoomControls />
                     </div>
                     <div className="order-3 lg:order-2">

@@ -68,7 +68,7 @@ export default function ParticipantList() {
                             >
                                 {/* The "Card" on the table */}
                                 <div
-                                    className={`w-12 h-16 rounded-md shadow-sm mb-3 flex items-center justify-center transition-all duration-500 ${isRevealed && hasVoted
+                                    className={`max-lg:w-10 max-lg:h-14 lg:w-12 lg:h-16 rounded-md shadow-sm max-lg:mb-2 lg:mb-3 flex items-center justify-center transition-all duration-500 ${isRevealed && hasVoted
                                         ? (isHighest ? 'bg-coffee-500 shadow-coffee-300 shadow-lg ring-2 ring-coffee-400 ring-offset-2 [transform:rotateY(180deg)]' : 'bg-coffee-600 [transform:rotateY(180deg)] opacity-80')
                                         : hasVoted ? 'bg-coffee-200 border-2 border-coffee-300' :
                                             'bg-white border border-stone-200'
@@ -77,8 +77,8 @@ export default function ParticipantList() {
                                 >
                                     {isRevealed && hasVoted ? (
                                         <div className={`font-bold select-none transition-all duration-500 tracking-tight ${isHighest
-                                                ? (participant.vote.length > 3 ? 'text-white text-xl drop-shadow-md' : 'text-white text-2xl drop-shadow-md')
-                                                : (participant.vote.length > 3 ? 'text-stone-200 text-base' : 'text-stone-200 text-lg')
+                                                ? (participant.vote.length > 3 ? 'text-white max-lg:text-lg lg:text-xl drop-shadow-md' : 'text-white max-lg:text-xl lg:text-2xl drop-shadow-md')
+                                                : (participant.vote.length > 3 ? 'text-stone-200 max-lg:text-sm lg:text-base' : 'text-stone-200 max-lg:text-base lg:text-lg')
                                             }`} style={{ transform: 'rotateY(180deg)' }}>
                                             {participant.vote}
                                         </div>
