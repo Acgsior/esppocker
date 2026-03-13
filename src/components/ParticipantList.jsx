@@ -42,7 +42,7 @@ export default function ParticipantList() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 max-lg:gap-2 lg:gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 max-lg:gap-1.5 lg:gap-4">
                 {voters.length === 0 ? (
                     <div className="col-span-full py-8 text-center text-stone-500 text-sm">
                         Waiting for players to join...
@@ -57,7 +57,7 @@ export default function ParticipantList() {
                         return (
                             <div
                                 key={participant.id}
-                                className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-500 ${isHovered
+                                className={`relative flex flex-col items-center max-lg:p-2 lg:p-4 rounded-xl border-2 transition-all duration-500 ${isHovered
                                     ? 'border-coffee-300 bg-coffee-100 shadow-md shadow-coffee-200/50 -translate-y-1 scale-105 z-10'
                                     : isHighest
                                         ? 'border-coffee-300 bg-coffee-50'
@@ -77,25 +77,25 @@ export default function ParticipantList() {
                                 >
                                     {isRevealed && hasVoted ? (
                                         <div className={`font-bold select-none transition-all duration-500 tracking-tight ${isHighest
-                                                ? (participant.vote.length > 3 ? 'text-white max-lg:text-lg lg:text-xl drop-shadow-md' : 'text-white max-lg:text-xl lg:text-2xl drop-shadow-md')
-                                                : (participant.vote.length > 3 ? 'text-stone-200 max-lg:text-sm lg:text-base' : 'text-stone-200 max-lg:text-base lg:text-lg')
+                                                ? (participant.vote.length > 3 ? 'text-white max-lg:text-sm lg:text-xl drop-shadow-md' : 'text-white max-lg:text-lg lg:text-2xl drop-shadow-md')
+                                                : (participant.vote.length > 3 ? 'text-stone-200 max-lg:text-xs lg:text-base' : 'text-stone-200 max-lg:text-sm lg:text-lg')
                                             }`} style={{ transform: 'rotateY(180deg)' }}>
                                             {participant.vote}
                                         </div>
                                     ) : hasVoted ? (
-                                        <Check className="w-5 h-5 text-coffee-500" />
+                                        <Check className="w-5 h-5 max-lg:w-4 max-lg:h-4 text-coffee-500" />
                                     ) : (
-                                        <Loader2 className="w-4 h-4 text-stone-300 animate-spin" />
+                                        <Loader2 className="w-4 h-4 max-lg:w-3 max-lg:h-3 text-stone-300 animate-spin" />
                                     )}
                                 </div>
 
                                 {/* Participant Name */}
-                                <span className="text-sm font-medium text-stone-700 truncate w-full text-center">
+                                <span className="text-sm max-lg:text-xs font-medium text-stone-700 truncate w-full text-center">
                                     {participant.name} {isCurrentUser && <span className="text-coffee-600 font-bold ml-1">(You)</span>}
                                 </span>
 
                                 {/* Status indicator pill */}
-                                <span className={`text-[10px] uppercase tracking-wider font-bold mt-1 px-2 py-0.5 rounded-full transition-colors duration-500 ${isRevealed
+                                <span className={`text-[10px] max-lg:text-[9px] uppercase tracking-wider font-bold max-lg:mt-0.5 lg:mt-1 max-lg:px-1.5 lg:px-2 py-0.5 rounded-full transition-colors duration-500 ${isRevealed
                                     ? (isHighest ? 'text-orange-800 bg-orange-200 shadow-sm' : (hasVoted ? 'text-stone-500 bg-stone-100' : 'text-stone-400 bg-stone-100 opacity-50'))
                                     : (hasVoted ? 'text-coffee-600 bg-coffee-100' : 'text-stone-500 bg-stone-200 animate-pulse')
                                     }`}>
