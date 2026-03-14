@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRoom } from '../context/RoomContext';
 import { Settings, Play } from 'lucide-react';
+import CoffeeIcon from '../components/CoffeeIcon';
 
 const VOTING_TEMPLATES = {
     FIBONACCI: ['0', '0.5', '1', '2', '3', '5', '8', '13', 'Skip'],
-    TSHIRT: ['XSS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL', 'Skip'],
 };
 
 export default function CreateRoom() {
     const [roomName, setRoomName] = useState('');
     const [template, setTemplate] = useState('FIBONACCI');
-    const [customStart, setCustomStart] = useState('1');
-    const [customMax, setCustomMax] = useState('10');
-    const [customStep, setCustomStep] = useState('1');
+    const [customStart, setCustomStart] = useState('0');
+    const [customMax, setCustomMax] = useState('100');
+    const [customStep, setCustomStep] = useState('10');
     const { createRoom, loading, error } = useRoom();
     const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ export default function CreateRoom() {
             const start = parseFloat(customStart);
             const max = parseFloat(customMax);
             const step = parseFloat(customStep);
-            
+
             if (!isNaN(start) && !isNaN(max) && !isNaN(step) && step > 0 && start < max) {
                 // To avoid floating point precision issues, we limit decimals
                 let current = start;
@@ -52,7 +52,7 @@ export default function CreateRoom() {
     return (
         <div className="max-w-lg w-full mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-stone-100">
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-stone-900 mb-2">Espresso Grooming Poker v3</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-stone-900 mb-2">Espresso Grooming Poker v4</h1>
                 <p className="text-stone-500">FOR Roadmap Team 1</p>
             </div>
 
@@ -93,20 +93,6 @@ export default function CreateRoom() {
                             </div>
                         </label>
 
-                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-stone-50 transition-colors">
-                            <input
-                                type="radio"
-                                name="template"
-                                value="TSHIRT"
-                                checked={template === 'TSHIRT'}
-                                onChange={() => setTemplate('TSHIRT')}
-                                className="w-4 h-4 text-coffee-600 border-stone-300 focus:ring-coffee-500"
-                            />
-                            <div className="ml-3">
-                                <span className="block text-sm font-medium text-stone-900">T-Shirt Size</span>
-                                <span className="block text-xs text-stone-500">XXS, XS, S, M, L, XL, XXL, XXXL</span>
-                            </div>
-                        </label>
 
                         <label className="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-stone-50 transition-colors">
                             <div className="flex items-center h-5 mt-1">
@@ -158,7 +144,7 @@ export default function CreateRoom() {
                                                 />
                                             </div>
                                         </div>
-                                        
+
                                         {/* Preview */}
                                         <div className="bg-stone-50 p-3 rounded-md border border-stone-200">
                                             <span className="block text-xs font-bold text-stone-500 mb-1 tracking-wider uppercase">Preview</span>
@@ -208,7 +194,7 @@ export default function CreateRoom() {
                 >
                     {loading ? (
                         <span className="animate-pulse flex items-center text-lg font-bold">
-                            <span className="animate-bounce mr-2">☕</span>
+                            <CoffeeIcon className="w-6 h-6 mr-2 animate-bounce" />
                             Brewing room...
                         </span>
                     ) : (

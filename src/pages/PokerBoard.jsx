@@ -5,6 +5,7 @@ import CardDeck from '../components/CardDeck';
 import ParticipantList from '../components/ParticipantList';
 import RoomControls from '../components/RoomControls';
 import VotingResults from '../components/VotingResults';
+import CoffeeIcon from '../components/CoffeeIcon';
 import { User, LogOut, RefreshCw, Copy, Check, Eye, RotateCcw } from 'lucide-react';
 
 const PRESET_NAMES = [
@@ -89,8 +90,8 @@ export default function PokerBoard() {
             <div className="flex flex-col items-center justify-center min-h-screen bg-stone-50/50">
                 <div className="relative flex justify-center items-center">
                     <div className="absolute animate-ping w-24 h-24 rounded-full bg-coffee-200 opacity-60"></div>
-                    <div className="relative flex items-center justify-center w-24 h-24 bg-white rounded-full shadow-lg border-4 border-coffee-500 text-4xl transform transition-transform hover:scale-110">
-                        <span className="animate-bounce mt-2">☕</span>
+                    <div className="relative flex items-center justify-center w-24 h-24 bg-white rounded-full shadow-lg border-4 border-coffee-500 transform transition-transform hover:scale-110">
+                        <CoffeeIcon className="w-12 h-12 mt-1 animate-bounce" />
                     </div>
                 </div>
                 <h2 className="mt-8 text-2xl font-bold text-stone-800 animate-pulse tracking-wide">Brewing your room...</h2>
@@ -104,7 +105,7 @@ export default function PokerBoard() {
             <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center bg-stone-50/50">
                 <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-stone-200">
                     <div className="w-16 h-16 bg-coffee-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span className="text-3xl">☕</span>
+                        <CoffeeIcon className="w-8 h-8" />
                     </div>
                     <h2 className="text-2xl font-bold text-stone-900 mb-3">Room not found</h2>
                     <p className="text-stone-600 leading-relaxed">
@@ -188,7 +189,7 @@ export default function PokerBoard() {
                     >
                         {joining ? (
                             <span className="animate-pulse flex items-center text-lg font-bold">
-                                <span className="animate-bounce mr-2">☕</span>
+                                <CoffeeIcon className="w-6 h-6 mr-2 animate-bounce" />
                                 Taking a seat...
                             </span>
                         ) : 'Join Table'}

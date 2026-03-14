@@ -68,7 +68,7 @@ export default function ParticipantList() {
                             >
                                 {/* The "Card" on the table */}
                                 <div
-                                    className={`w-12 h-16 max-lg:w-10 max-lg:h-14 rounded-md shadow-sm mb-3 max-lg:mb-2 flex items-center justify-center transition-all duration-500 ${isRevealed && hasVoted
+                                    className={`w-12 h-16 max-lg:w-10 max-lg:h-14 rounded-md shadow-sm mb-3 max-lg:mb-2 flex items-center justify-center overflow-hidden transition-all duration-500 ${isRevealed && hasVoted
                                         ? (isHighest ? 'bg-coffee-500 shadow-coffee-300 shadow-lg ring-2 ring-coffee-400 ring-offset-2 [transform:rotateY(180deg)]' : 'bg-coffee-600 [transform:rotateY(180deg)] opacity-80')
                                         : hasVoted ? 'bg-coffee-200 border-2 border-coffee-300' :
                                             'bg-white border border-stone-200'
@@ -76,11 +76,19 @@ export default function ParticipantList() {
                                     style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
                                 >
                                     {isRevealed && hasVoted ? (
-                                        <div className={`font-bold select-none transition-all duration-500 tracking-tight ${isHighest
-                                                ? (participant.vote.length > 3 ? 'text-xl max-lg:text-sm text-white drop-shadow-md' : 'text-2xl max-lg:text-lg text-white drop-shadow-md')
+                                        <div className={`font-bold select-none transition-all duration-500 tracking-tight flex items-center justify-center min-w-full min-h-full ${isHighest
+                                                ? (participant.vote.length > 3 ? 'text-lg max-lg:text-sm text-white drop-shadow-md' : 'text-2xl max-lg:text-lg text-white drop-shadow-md')
                                                 : (participant.vote.length > 3 ? 'text-base max-lg:text-xs text-stone-200' : 'text-lg max-lg:text-sm text-stone-200')
                                             }`} style={{ transform: 'rotateY(180deg)' }}>
-                                            {participant.vote}
+                                            {typeof participant.vote === 'string' && participant.vote.includes('-') ? (
+                                                <div className="flex flex-col items-center justify-center leading-none text-center text-s">
+                                                    <span>{participant.vote.split('-')[0]}</span>
+                                                    <span className="text-[0.7em] opacity-60 my-0.5">-</span>
+                                                    <span>{participant.vote.split('-')[1]}</span>
+                                                </div>
+                                            ) : (
+                                                participant.vote
+                                            )}
                                         </div>
                                     ) : hasVoted ? (
                                         <Check className="w-5 h-5 max-lg:w-4 max-lg:h-4 text-coffee-500" />

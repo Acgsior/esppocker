@@ -66,6 +66,7 @@ export default function CardDeck() {
                 <div className={`grid grid-cols-3 landscape:max-lg:flex landscape:max-lg:flex-nowrap landscape:max-lg:overflow-x-auto landscape:max-lg:gap-2 landscape:max-lg:pt-4 landscape:max-lg:pb-6 landscape:max-lg:-mx-2 landscape:max-lg:px-2 gap-3 transition-all duration-300 ${isPrivacyMode ? 'group-hover:opacity-100 opacity-0 select-none' : ''}`}>
                     {options.map((option) => {
                         const isSelected = currentVote === option;
+                        const isCustomRange = typeof option === 'string' && option.includes('-');
 
                         return (
                             <button
@@ -82,17 +83,29 @@ export default function CardDeck() {
                                     }
               `}
                             >
-                                <span className={`text-xl font-bold landscape:max-lg:text-base ${isSelected ? 'text-white' : 'text-stone-900'}`}>
-                                    {option}
+                                <span className={`font-bold landscape:max-lg:text-base ${isSelected ? 'text-white' : 'text-stone-900'}`}>
+                                    {isCustomRange ? (
+                                        <div className="flex flex-col items-center justify-center leading-[1.1] text-base">
+                                            <span>{option.split('-')[0]}</span>
+                                            <span className="text-[0.6em] opacity-50 my-0.5">-</span>
+                                            <span>{option.split('-')[1]}</span>
+                                        </div>
+                                    ) : (
+                                        <span className="text-xl">{option}</span>
+                                    )}
                                 </span>
 
                                 {/* Decorative corners */}
-                                <span className={`absolute top-2 left-2 text-[10px] landscape:max-lg:text-[8px] font-medium opacity-50 ${isSelected ? 'text-white' : ''}`}>
-                                    {option}
-                                </span>
-                                <span className={`absolute bottom-2 right-2 text-[10px] landscape:max-lg:text-[8px] font-medium opacity-50 rotate-180 ${isSelected ? 'text-white' : ''}`}>
-                                    {option}
-                                </span>
+                                {!isCustomRange && (
+                                    <>
+                                        <span className={`absolute top-2 left-2 text-[10px] landscape:max-lg:text-[8px] font-medium opacity-50 ${isSelected ? 'text-white' : ''}`}>
+                                            {option}
+                                        </span>
+                                        <span className={`absolute bottom-2 right-2 text-[10px] landscape:max-lg:text-[8px] font-medium opacity-50 rotate-180 ${isSelected ? 'text-white' : ''}`}>
+                                            {option}
+                                        </span>
+                                    </>
+                                )}
                             </button>
                         );
                     })}
