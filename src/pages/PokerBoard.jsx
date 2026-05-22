@@ -87,28 +87,28 @@ export default function PokerBoard() {
 
     if (!isReady) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-stone-50/50">
+            <div className="flex flex-col items-center justify-center min-h-screen bg-canvas/50">
                 <div className="relative flex justify-center items-center">
-                    <div className="absolute animate-ping w-24 h-24 rounded-full bg-coffee-200 opacity-60"></div>
-                    <div className="relative flex items-center justify-center w-24 h-24 bg-white rounded-full shadow-lg border-4 border-coffee-500 transform transition-transform hover:scale-110">
+                    <div className="absolute animate-ping w-24 h-24 rounded-full bg-coffee-200 dark:bg-coffee-800 opacity-60"></div>
+                    <div className="relative flex items-center justify-center w-24 h-24 bg-surface-card rounded-full shadow-lg border-4 border-coffee-500 dark:border-coffee-600 transform transition-transform hover:scale-110">
                         <CoffeeIcon className="w-12 h-12 mt-1 animate-bounce" />
                     </div>
                 </div>
-                <h2 className="mt-8 text-2xl font-bold text-stone-800 animate-pulse tracking-wide">Brewing your room...</h2>
-                <p className="mt-3 text-stone-500 font-medium tracking-wide">Please wait while we set up the table</p>
+                <h2 className="mt-8 text-2xl font-bold text-ink animate-pulse tracking-wide">Brewing your room...</h2>
+                <p className="mt-3 text-muted font-medium tracking-wide">Please wait while we set up the table</p>
             </div>
         );
     }
 
     if (error || !currentRoom) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center bg-stone-50/50">
-                <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-stone-200">
-                    <div className="w-16 h-16 bg-coffee-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center bg-canvas/50">
+                <div className="bg-surface-card p-8 rounded-2xl shadow-xl max-w-md w-full border border-hairline">
+                    <div className="w-16 h-16 bg-coffee-100 dark:bg-coffee-900/50 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CoffeeIcon className="w-8 h-8" />
                     </div>
-                    <h2 className="text-2xl font-bold text-stone-900 mb-3">Room not found</h2>
-                    <p className="text-stone-600 leading-relaxed">
+                    <h2 className="text-2xl font-bold text-ink mb-3">Room not found</h2>
+                    <p className="text-body-strong leading-relaxed">
                         {error || "The room you are looking for doesn't exist or has been removed."}
                     </p>
                 </div>
@@ -119,20 +119,20 @@ export default function PokerBoard() {
     // Not joined yet
     if (!currentUser) {
         return (
-            <div className="max-w-md w-full mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-stone-100">
+            <div className="max-w-md w-full mx-auto mt-20 p-8 bg-surface-card rounded-xl shadow-lg border border-hairline">
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold tracking-tight text-stone-900 mb-2">Join Room</h1>
-                    <p className="text-coffee-600 font-medium">{currentRoom.name}</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-ink mb-2">Join Room</h1>
+                    <p className="text-coffee-600 dark:text-coffee-400 font-medium">{currentRoom.name}</p>
                 </div>
 
                 <form onSubmit={handleJoin} className="space-y-6">
                     <div>
-                        <label htmlFor="nickname" className="block text-sm font-medium text-stone-700 mb-1">
+                        <label htmlFor="nickname" className="block text-sm font-medium text-body-strong mb-1">
                             Your Name
                         </label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <User className="h-5 w-5 text-stone-400" />
+                                <User className="h-5 w-5 text-muted-soft" />
                             </div>
                             <input
                                 id="nickname"
@@ -140,13 +140,13 @@ export default function PokerBoard() {
                                 list="preset-names"
                                 required
                                 placeholder="Select or enter your name"
-                                className="w-full pl-10 pr-10 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-8 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer z-10 bg-transparent"
+                                className="w-full pl-10 pr-10 py-3 rounded-lg border border-hairline focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-8 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer z-10 bg-transparent"
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
                             />
                             {/* Custom caret icon appearing behind the invisible native invisible indicator */}
                             <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none z-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-soft">
                                     <path d="m6 9 6 6 6-6" />
                                 </svg>
                             </div>
@@ -158,12 +158,12 @@ export default function PokerBoard() {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-4 p-3 bg-stone-50 rounded-lg border border-stone-200">
-                        <div className="flex items-center text-sm text-stone-700 select-none">
-                            <Eye className="w-4 h-4 mr-2 text-stone-400" />
+                    <div className="flex items-center justify-between mt-4 p-3 bg-surface-soft rounded-lg border border-hairline">
+                        <div className="flex items-center text-sm text-body-strong select-none">
+                            <Eye className="w-4 h-4 mr-2 text-muted-soft" />
                             <div>
                                 <p className="font-medium">Join as Observer</p>
-                                <p className="text-xs text-stone-500">You won't participate in voting</p>
+                                <p className="text-xs text-muted">You won't participate in voting</p>
                             </div>
                         </div>
                         <button
@@ -171,12 +171,12 @@ export default function PokerBoard() {
                             role="switch"
                             aria-checked={isObserver}
                             onClick={() => setIsObserver(!isObserver)}
-                            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-coffee-500 focus:ring-offset-2 ${isObserver ? 'bg-coffee-600' : 'bg-stone-300'
+                            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-coffee-500 focus:ring-offset-2 ${isObserver ? 'bg-coffee-600' : 'bg-hairline'
                                 }`}
                         >
                             <span
                                 aria-hidden="true"
-                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isObserver ? 'translate-x-5' : 'translate-x-0'
+                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-canvas shadow ring-0 transition duration-200 ease-in-out ${isObserver ? 'translate-x-5' : 'translate-x-0'
                                     }`}
                             />
                         </button>
@@ -203,17 +203,17 @@ export default function PokerBoard() {
     return (
         <div className="max-w-6xl mx-auto py-8 max-lg:py-2 px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col">
             {/* Header */}
-            <header className="flex justify-between items-center mb-8 max-lg:mb-3 bg-white p-4 rounded-xl shadow-sm border border-stone-100">
+            <header className="flex justify-between items-center mb-8 max-lg:mb-3 bg-surface-card p-4 rounded-xl shadow-sm border border-hairline">
                 <div>
-                    <h1 className="text-xl font-bold text-stone-900">{currentRoom.name}</h1>
-                    <div className="flex items-center text-sm font-medium text-stone-600 mt-1">
+                    <h1 className="text-xl font-bold text-ink">{currentRoom.name}</h1>
+                    <div className="flex items-center text-sm font-medium text-body-strong mt-1">
                         <span className={`inline-block w-2 h-2 rounded-full mr-2 ${currentRoom.status === 'voting' ? 'bg-green-500 animate-pulse' : 'bg-orange-500'}`}></span>
                         {currentRoom.status === 'voting' ? 'Voting in progress' : 'Cards revealed'}
 
-                        <span className="mx-2 text-stone-300">|</span>
+                        <span className="mx-2 text-muted-soft">|</span>
                         <button
                             onClick={handleCopyUrl}
-                            className={`flex items-center gap-1 transition-colors ${copied ? 'text-green-600' : 'text-stone-500 hover:text-coffee-700'}`}
+                            className={`flex items-center gap-1 transition-colors ${copied ? 'text-green-600' : 'text-muted hover:text-coffee-700'}`}
                             title="Copy Room Link"
                         >
                             {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
@@ -222,14 +222,14 @@ export default function PokerBoard() {
                     </div>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
-                    <div className="hidden sm:flex items-center text-sm bg-stone-50 px-3 py-1.5 rounded-full border">
-                        <User className="w-4 h-4 mr-2 text-stone-400" />
+                    <div className="hidden sm:flex items-center text-sm bg-surface-soft px-3 py-1.5 rounded-full border border-hairline">
+                        <User className="w-4 h-4 mr-2 text-muted-soft" />
                         <span className="font-medium">{currentUser.name}</span>
                     </div>
                     <button
                         onClick={handleRefresh}
                         disabled={isRefreshing}
-                        className="p-2 text-stone-500 hover:text-coffee-700 hover:bg-coffee-50 rounded-lg transition-colors flex items-center"
+                        className="p-2 text-muted hover:text-coffee-700 hover:bg-coffee-50 rounded-lg transition-colors flex items-center"
                         title="Refresh Room"
                     >
                         <RefreshCw className={`w-5 h-5 sm:mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -237,7 +237,7 @@ export default function PokerBoard() {
                     </button>
                     <button
                         onClick={handleLeave}
-                        className="p-2 text-stone-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex items-center"
+                        className="p-2 text-muted hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex items-center"
                         title="Leave Room"
                     >
                         <LogOut className="w-5 h-5 sm:mr-1" />
@@ -250,7 +250,7 @@ export default function PokerBoard() {
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-8 max-lg:gap-3 relative">
                 <div className="lg:col-span-3 flex flex-col gap-8 max-lg:gap-3 relative">
                     {/* Sticky wrapper for RoomControls on mobile */}
-                    <div className="order-1 sticky top-0 z-20 -mx-4 px-4 max-lg:py-1 bg-stone-50/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
+                    <div className="order-1 sticky top-0 z-20 -mx-4 px-4 max-lg:py-1 bg-canvas/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
                         <RoomControls />
                     </div>
                     <div className="order-3 lg:order-2">

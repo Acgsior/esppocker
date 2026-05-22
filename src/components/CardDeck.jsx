@@ -10,13 +10,13 @@ export default function CardDeck() {
 
     if (currentUser.is_observer) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-4 lg:sticky lg:top-8 text-center flex items-center justify-center space-x-3">
-                <div className="bg-stone-50 p-2 rounded-full border border-stone-100 flex-shrink-0">
-                    <Eye className="w-5 h-5 text-stone-400" />
+            <div className="bg-surface-card rounded-xl shadow-sm border border-hairline p-4 lg:sticky lg:top-8 text-center flex items-center justify-center space-x-3">
+                <div className="bg-canvas p-2 rounded-full border border-hairline flex-shrink-0">
+                    <Eye className="w-5 h-5 text-muted-soft" />
                 </div>
                 <div className="text-left">
-                    <h2 className="text-base font-bold text-stone-800">Spectator Mode</h2>
-                    <p className="text-xs text-stone-500">You are observing this room.</p>
+                    <h2 className="text-base font-bold text-ink">Spectator Mode</h2>
+                    <p className="text-xs text-muted">You are observing this room.</p>
                 </div>
             </div>
         );
@@ -28,15 +28,15 @@ export default function CardDeck() {
     const currentVote = isRevealed ? null : currentUser.vote;
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 sticky top-8">
+        <div className="bg-surface-card rounded-2xl shadow-sm border border-hairline p-6 sticky top-8">
             <div className="flex justify-between items-start mb-6">
                 <div>
-                    <h2 className="text-xl font-bold text-stone-800">Your Cards</h2>
+                    <h2 className="text-xl font-bold text-ink">Your Cards</h2>
                     <div className="relative mt-1">
                         <p className="text-sm text-transparent select-none pointer-events-none" aria-hidden="true">
                             Select a card to drop your vote.
                         </p>
-                        <p className="text-sm text-stone-500 absolute inset-0">
+                        <p className="text-sm text-muted absolute inset-0">
                             {isRevealed ? 'Round finished.' : 'Select a card to drop your vote.'}
                         </p>
                     </div>
@@ -45,7 +45,7 @@ export default function CardDeck() {
                 {/* Privacy Mode Switch */}
                 <button
                     onClick={() => setIsPrivacyMode(!isPrivacyMode)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${isPrivacyMode ? 'bg-stone-800 text-white border-stone-800' : 'bg-stone-50 text-stone-600 border-stone-200 hover:bg-stone-100'}`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border ${isPrivacyMode ? 'bg-surface-dark text-on-dark border-surface-dark' : 'bg-canvas text-body-strong border-hairline hover:bg-surface-soft'}`}
                     title="Toggle Privacy Mode"
                 >
                     {isPrivacyMode ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -56,8 +56,8 @@ export default function CardDeck() {
             <div className="group relative -mx-2 -mb-2 p-2">
                 {/* Blurred Overlay when not hovered */}
                 {isPrivacyMode && (
-                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/95 backdrop-blur-xl opacity-100 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none rounded-xl">
-                        <span className="bg-stone-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 ">
+                    <div className="absolute inset-0 z-20 flex items-center justify-center bg-surface-card/95 backdrop-blur-xl opacity-100 group-hover:opacity-0 transition-opacity duration-300 pointer-events-none rounded-xl">
+                        <span className="bg-surface-dark text-on-dark text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 ">
                             <Eye className="w-4 h-4" /> Hover to reveal
                         </span>
                     </div>
@@ -78,12 +78,12 @@ export default function CardDeck() {
                 landscape:max-lg:flex-1 landscape:max-lg:min-w-[40px] landscape:max-lg:max-w-[72px] landscape:max-lg:p-1 landscape:max-lg:rounded-lg
                 ${isRevealed ? 'cursor-not-allowed opacity-50 grayscale' : 'hover:-translate-y-2 hover:shadow-md cursor-pointer'}
                 ${isSelected
-                                        ? 'bg-coffee-600 text-white shadow-lg shadow-coffee-200 ring-2 ring-coffee-600 ring-offset-2 scale-105'
-                                        : 'bg-white border-2 border-stone-200 text-stone-700 hover:border-coffee-300'
+                                        ? 'bg-coffee-600 text-white shadow-lg shadow-coffee-200 dark:shadow-none ring-2 ring-coffee-600 ring-offset-2 dark:ring-offset-surface-card scale-105'
+                                        : 'bg-surface-card border-2 border-hairline text-body-strong hover:border-coffee-300 dark:hover:border-coffee-600'
                                     }
               `}
                             >
-                                <span className={`font-bold landscape:max-lg:text-base ${isSelected ? 'text-white' : 'text-stone-900'}`}>
+                                <span className={`font-bold landscape:max-lg:text-base ${isSelected ? 'text-white' : 'text-ink'}`}>
                                     {isCustomRange ? (
                                         <div className="flex flex-col items-center justify-center leading-[1.1] text-base">
                                             <span>{option.split('-')[0]}</span>

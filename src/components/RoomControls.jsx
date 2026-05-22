@@ -1,9 +1,11 @@
 import React from 'react';
 import { useRoom } from '../context/RoomContext';
-import { Eye, RotateCcw } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import { Eye, RotateCcw, Moon, Sun } from 'lucide-react';
 
 export default function RoomControls() {
     const { currentRoom, participants, revealCards, startNewVoting } = useRoom();
+    const { theme, toggleTheme } = useTheme();
 
     if (!currentRoom) return null;
 
@@ -11,13 +13,20 @@ export default function RoomControls() {
     const hasVotes = participants && participants.length > 0 && participants.some(p => p.vote !== null && p.vote !== undefined);
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 max-lg:py-3 max-lg:px-4 flex flex-col sm:flex-row items-center justify-between gap-4 max-lg:gap-2">
+        <div className="bg-surface-card rounded-2xl shadow-sm border border-hairline p-6 max-lg:py-3 max-lg:px-4 flex flex-col sm:flex-row items-center justify-between gap-4 max-lg:gap-2">
             <div>
-                <h3 className="font-semibold text-stone-900">Room Controls</h3>
-                <p className="text-sm text-stone-500">Manage the current voting round.</p>
+                <h3 className="font-semibold text-ink">Room Controls</h3>
+                <p className="text-sm text-muted">Manage the current voting round.</p>
             </div>
 
-            <div className="flex gap-3 w-full sm:w-auto">
+            <div className="flex gap-3 w-full sm:w-auto items-center">
+                <button
+                    onClick={toggleTheme}
+                    className="p-2.5 rounded-lg border border-hairline hover:bg-surface-soft text-ink transition-colors"
+                    title="Toggle Theme"
+                >
+                    {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
                 {!isRevealed ? (
                     <button
                         onClick={() => revealCards(currentRoom.id)}

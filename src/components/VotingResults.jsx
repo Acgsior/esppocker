@@ -52,9 +52,9 @@ export default function VotingResults() {
 
     if (totalVotes === 0) {
         return (
-            <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 max-lg:p-4">
-                <h3 className="text-xl font-bold text-stone-800 mb-4 max-lg:mb-2">Voting Results</h3>
-                <p className="text-stone-500 text-sm">No votes to display.</p>
+            <div className="bg-surface-card rounded-2xl shadow-sm border border-hairline p-6 max-lg:p-4">
+                <h3 className="text-xl font-bold text-ink mb-4 max-lg:mb-2">Voting Results</h3>
+                <p className="text-muted text-sm">No votes to display.</p>
             </div>
         );
     }
@@ -77,34 +77,34 @@ export default function VotingResults() {
     const maxCount = results.length > 0 ? results[0].count : 0;
 
     return (
-        <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 max-lg:p-4 relative">
-            <h3 className="text-xl font-bold text-stone-800 mb-6 max-lg:mb-3">Voting Results</h3>
+        <div className="bg-surface-card rounded-2xl shadow-sm border border-hairline p-6 max-lg:p-4 relative">
+            <h3 className="text-xl font-bold text-ink mb-6 max-lg:mb-3">Voting Results</h3>
             <div className="space-y-4 max-lg:space-y-2">
                 {results.map(item => {
                     const isHighest = item.count === maxCount;
                     // Using orange to represent the highest score highlight
-                    const badgeColor = isHighest ? 'bg-orange-100 text-orange-800' : 'bg-coffee-100 text-coffee-800';
-                    const barColor = isHighest ? 'bg-orange-500' : 'bg-coffee-500';
+                    const badgeColor = isHighest ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300' : 'bg-coffee-100 text-coffee-800 dark:bg-coffee-900/50 dark:text-coffee-300';
+                    const barColor = isHighest ? 'bg-orange-500' : 'bg-coffee-500 dark:bg-coffee-600';
 
                     return (
                         <div
                             key={item.vote}
                             onMouseEnter={() => setHoveredVote && setHoveredVote(item.vote)}
                             onMouseLeave={() => setHoveredVote && setHoveredVote(null)}
-                            className="p-3 -mx-3 rounded-xl hover:bg-stone-50 transition-colors duration-200 cursor-default"
+                            className="p-3 -mx-3 rounded-xl hover:bg-surface-soft transition-colors duration-200 cursor-default"
                         >
-                            <div className="flex justify-between items-center mb-2 text-sm font-medium text-stone-700">
+                            <div className="flex justify-between items-center mb-2 text-sm font-medium text-body-strong">
                                 <div className="flex items-center gap-2">
                                     <span className={`inline-block px-2.5 py-1 rounded-md text-md font-bold min-w-[2.5rem] text-center shadow-sm ${badgeColor}`}>
                                         {item.vote}
                                     </span>
                                 </div>
-                                <span className="text-stone-900 font-bold ml-2">
-                                    {item.count} <span className="font-normal text-stone-500 text-md mr-1">vote{item.count !== 1 ? 's' : ''}</span>
-                                    <span className="text-coffee-700">({item.percentage}%)</span>
+                                <span className="text-ink font-bold ml-2">
+                                    {item.count} <span className="font-normal text-muted text-md mr-1">vote{item.count !== 1 ? 's' : ''}</span>
+                                    <span className="text-coffee-700 dark:text-coffee-400">({item.percentage}%)</span>
                                 </span>
                             </div>
-                            <div className="w-full bg-stone-100 rounded-full h-3 overflow-hidden">
+                            <div className="w-full bg-surface-soft rounded-full h-3 overflow-hidden">
                                 <div
                                     className={`${barColor} h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden`}
                                     style={{ width: `${item.percentage}%` }}

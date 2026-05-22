@@ -50,15 +50,15 @@ export default function CreateRoom() {
     };
 
     return (
-        <div className="max-w-lg w-full mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg border border-stone-100">
+        <div className="max-w-lg w-full mx-auto mt-20 p-8 bg-surface-card rounded-xl shadow-lg border border-hairline">
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-stone-900 mb-2">Espresso Grooming Poker v4</h1>
-                <p className="text-stone-500">FOR Roadmap Team 1</p>
+                <h1 className="text-3xl font-bold tracking-tight text-ink mb-2">Espresso Grooming Poker v4</h1>
+                <p className="text-muted">FOR Roadmap Team 1</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label htmlFor="roomName" className="block text-sm font-medium text-stone-700 mb-1">
+                    <label htmlFor="roomName" className="block text-sm font-medium text-body-strong mb-1">
                         Room Name
                     </label>
                     <input
@@ -66,35 +66,35 @@ export default function CreateRoom() {
                         type="text"
                         required
                         placeholder="e.g. Sprint 42 Planning"
-                        className="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none"
+                        className="w-full px-4 py-3 rounded-lg border border-hairline focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none"
                         value={roomName}
                         onChange={(e) => setRoomName(e.target.value)}
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-3 flex items-center">
-                        <Settings className="w-4 h-4 mr-1 text-stone-400" />
+                    <label className="block text-sm font-medium text-body-strong mb-3 flex items-center">
+                        <Settings className="w-4 h-4 mr-1 text-muted-soft" />
                         Voting Template
                     </label>
                     <div className="space-y-3">
-                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-stone-50 transition-colors">
+                        <label className="flex items-center p-3 border border-hairline rounded-lg cursor-pointer hover:bg-surface-soft transition-colors">
                             <input
                                 type="radio"
                                 name="template"
                                 value="FIBONACCI"
                                 checked={template === 'FIBONACCI'}
                                 onChange={() => setTemplate('FIBONACCI')}
-                                className="w-4 h-4 text-coffee-600 border-stone-300 focus:ring-coffee-500"
+                                className="w-4 h-4 text-coffee-600 border-hairline focus:ring-coffee-500"
                             />
                             <div className="ml-3">
-                                <span className="block text-sm font-medium text-stone-900">Fibonacci</span>
-                                <span className="block text-xs text-stone-500">0, 0.5, 1, 2, 3, 5, 8, 13</span>
+                                <span className="block text-sm font-medium text-ink">Fibonacci</span>
+                                <span className="block text-xs text-muted">0, 0.5, 1, 2, 3, 5, 8, 13</span>
                             </div>
                         </label>
 
 
-                        <label className="flex items-start p-3 border rounded-lg cursor-pointer hover:bg-stone-50 transition-colors">
+                        <label className="flex items-start p-3 border border-hairline rounded-lg cursor-pointer hover:bg-surface-soft transition-colors">
                             <div className="flex items-center h-5 mt-1">
                                 <input
                                     type="radio"
@@ -102,42 +102,42 @@ export default function CreateRoom() {
                                     value="CUSTOM"
                                     checked={template === 'CUSTOM'}
                                     onChange={() => setTemplate('CUSTOM')}
-                                    className="w-4 h-4 text-coffee-600 border-stone-300 focus:ring-coffee-500"
+                                    className="w-4 h-4 text-coffee-600 border-hairline focus:ring-coffee-500"
                                 />
                             </div>
                             <div className="ml-3 w-full">
-                                <span className="block text-sm font-medium text-stone-900 mb-1">Custom Range</span>
-                                <span className="block text-xs text-stone-500 mb-2">Generate a sequence by start, max, and step amounts</span>
+                                <span className="block text-sm font-medium text-ink mb-1">Custom Range</span>
+                                <span className="block text-xs text-muted mb-2">Generate a sequence by start, max, and step amounts</span>
                                 {template === 'CUSTOM' && (
                                     <div className="space-y-3 mt-2 pr-3">
                                         <div className="grid grid-cols-3 gap-3">
                                             <div>
-                                                <label className="block text-xs text-stone-500 mb-1">Start</label>
+                                                <label className="block text-xs text-muted mb-1">Start</label>
                                                 <input
                                                     type="number"
-                                                    className="w-full px-3 py-2 text-sm rounded-md border border-stone-300 focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
                                                     value={customStart}
                                                     onChange={(e) => setCustomStart(e.target.value)}
                                                     required={template === 'CUSTOM'}
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs text-stone-500 mb-1">Max</label>
+                                                <label className="block text-xs text-muted mb-1">Max</label>
                                                 <input
                                                     type="number"
-                                                    className="w-full px-3 py-2 text-sm rounded-md border border-stone-300 focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
                                                     value={customMax}
                                                     onChange={(e) => setCustomMax(e.target.value)}
                                                     required={template === 'CUSTOM'}
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs text-stone-500 mb-1">Step</label>
+                                                <label className="block text-xs text-muted mb-1">Step</label>
                                                 <input
                                                     type="number"
                                                     min="0.1"
                                                     step="0.1"
-                                                    className="w-full px-3 py-2 text-sm rounded-md border border-stone-300 focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
                                                     value={customStep}
                                                     onChange={(e) => setCustomStep(e.target.value)}
                                                     required={template === 'CUSTOM'}
@@ -146,8 +146,8 @@ export default function CreateRoom() {
                                         </div>
 
                                         {/* Preview */}
-                                        <div className="bg-stone-50 p-3 rounded-md border border-stone-200">
-                                            <span className="block text-xs font-bold text-stone-500 mb-1 tracking-wider uppercase">Preview</span>
+                                        <div className="bg-surface-soft p-3 rounded-md border border-hairline">
+                                            <span className="block text-xs font-bold text-muted mb-1 tracking-wider uppercase">Preview</span>
                                             <div className="flex flex-wrap gap-1.5">
                                                 {(() => {
                                                     const s = parseFloat(customStart);
@@ -166,11 +166,11 @@ export default function CreateRoom() {
                                                     return items.length > 0 ? (
                                                         <>
                                                             {items.slice(0, 10).map((v, i) => (
-                                                                <span key={i} className="inline-block px-2 py-0.5 bg-white border border-stone-200 rounded text-xs text-stone-600 font-medium shadow-sm">{v}</span>
+                                                                <span key={i} className="inline-block px-2 py-0.5 bg-surface-card border border-hairline rounded text-xs text-body-strong font-medium shadow-sm">{v}</span>
                                                             ))}
-                                                            {items.length > 10 && <span className="inline-block px-2 py-0.5 text-xs text-stone-400 font-medium">... ({items.length} total)</span>}
+                                                            {items.length > 10 && <span className="inline-block px-2 py-0.5 text-xs text-muted-soft font-medium">... ({items.length} total)</span>}
                                                         </>
-                                                    ) : <span className="text-xs text-stone-400">Invalid range</span>;
+                                                    ) : <span className="text-xs text-muted-soft">Invalid range</span>;
                                                 })()}
                                             </div>
                                         </div>
