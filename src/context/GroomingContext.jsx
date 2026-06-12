@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
-import { useNavigate } from 'react-router-dom';
 
-const RoomContext = createContext();
+const GroomingContext = createContext();
 
-export const useRoom = () => useContext(RoomContext);
+// eslint-disable-next-line react-refresh/only-export-components
+export const useGrooming = () => useContext(GroomingContext);
 
-export const RoomProvider = ({ children }) => {
-    const [currentRoom, setCurrentRoom] = useState(null);
+export const GroomingProvider = ({ children }) => {
+    const [currentGrooming, setCurrentGrooming] = useState(null);
     const [participants, setParticipants] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -15,29 +15,28 @@ export const RoomProvider = ({ children }) => {
     const [actionBubble, setActionBubble] = useState(null);
     const [hoveredVote, setHoveredVote] = useState(null);
     const channelRef = useRef(null);
-    const navigate = useNavigate();
 
-    // Create a new room
-    const createRoom = async (name, votingOptions) => {
+    // Create a new grooming session
+    const createGrooming = async (name, deck) => {
         setLoading(true);
         setError(null);
         try {
-            // Check if room with the same name already exists
-            const { data: existingRoom } = await supabase
+            // Check if grooming room with the same name already exists
+            const { data: existingGrooming } = await supabase
                 .from('rooms')
                 .select('id')
                 .eq('name', name)
                 .maybeSingle();
 
-            if (existingRoom) {
-                // Update voting options to the latest requested
-                await supabase.from('rooms').update({ voting_options: votingOptions }).eq('id', existingRoom.id);
-                return existingRoom.id;
+            if (existingGrooming) {
+                // Update deck to the latest requested
+                await supabase.from('rooms').update({ voting_options: deck }).eq('id', existingGrooming.id);
+                return existingGrooming.id;
             }
 
             const { data, error } = await supabase
                 .from('rooms')
-                .insert([{ name, voting_options: votingOptions, status: 'voting' }])
+                .insert([{ name, voting_options: deck, status: 'voting' }])
                 .select()
                 .single();
 
@@ -51,25 +50,25 @@ export const RoomProvider = ({ children }) => {
         }
     };
 
-    // Join a room and create a participant
-    const joinRoom = async (roomId, participantName, isObserver = false) => {
+    // Join a grooming session and create a participant
+    const joinGrooming = async (groomingId, participantName, isObserver = false) => {
         setLoading(true);
         setError(null);
         try {
             // 1. Check if room exists
-            const { data: roomData, error: roomError } = await supabase
+            const { data: groomingData, error: groomingError } = await supabase
                 .from('rooms')
                 .select('*')
-                .eq('id', roomId)
+                .eq('id', groomingId)
                 .single();
 
-            if (roomError || !roomData) throw new Error('Room not found or invalid.');
+            if (groomingError || !groomingData) throw new Error('Grooming session not found or invalid.');
 
             // 2. Add or Update participant
             const { data: existingParticipants, error: existingError } = await supabase
                 .from('participants')
                 .select('*')
-                .eq('room_id', roomId)
+                .eq('room_id', groomingId)
                 .eq('name', participantName)
                 .order('joined_at', { ascending: true });
 
@@ -97,7 +96,7 @@ export const RoomProvider = ({ children }) => {
                 // Insert new participant
                 const { data: newParticipant, error: participantError } = await supabase
                     .from('participants')
-                    .insert([{ room_id: roomId, name: participantName, is_observer: isObserver }])
+                    .insert([{ room_id: groomingId, name: participantName, is_observer: isObserver }])
                     .select()
                     .single();
 
@@ -108,15 +107,18 @@ export const RoomProvider = ({ children }) => {
             // 3. Save to cookie with 8-hour expiration
             const expiryTime = Date.now() + 8 * 60 * 60 * 1000;
             const userData = JSON.stringify({ ...participantData, is_observer: isObserver, expires: expiryTime });
-            document.cookie = `poker_user_${roomId}=${encodeURIComponent(userData)}; path=/; max-age=${60 * 60 * 8};`;
+            
+            // Migration: Delete old poker_user cookie if it exists
+            document.cookie = `poker_user_${groomingId}=; path=/; max-age=0;`;
+            document.cookie = `grooming_user_${groomingId}=${encodeURIComponent(userData)}; path=/; max-age=${60 * 60 * 8};`;
 
             // Save independent name for auto-fill in future forms
-            document.cookie = `poker_last_used_name=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 24 * 30};`;
+            document.cookie = `grooming_last_used_name=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 24 * 30};`;
 
             // 4. Save global cookie for nickname persistence across rooms (8 hours)
-            document.cookie = `poker_nickname=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 8};`;
+            document.cookie = `grooming_nickname=${encodeURIComponent(participantName)}; path=/; max-age=${60 * 60 * 8};`;
 
-            setCurrentRoom(roomData);
+            setCurrentGrooming(groomingData);
             setCurrentUser(participantData);
 
             return true;
@@ -129,8 +131,15 @@ export const RoomProvider = ({ children }) => {
     };
 
     // Check existing session
-    const checkSession = async (roomId) => {
-        const matchUser = document.cookie.match(new RegExp(`(?:^|; )poker_user_${roomId}=([^;]+)`));
+    const checkSession = async (groomingId) => {
+        // Cookie Migration Logic
+        const oldMatchUser = document.cookie.match(new RegExp(`(?:^|; )poker_user_${groomingId}=([^;]+)`));
+        if (oldMatchUser) {
+            document.cookie = `grooming_user_${groomingId}=${oldMatchUser[1]}; path=/; max-age=${60 * 60 * 8};`;
+            document.cookie = `poker_user_${groomingId}=; path=/; max-age=0;`;
+        }
+
+        const matchUser = document.cookie.match(new RegExp(`(?:^|; )grooming_user_${groomingId}=([^;]+)`));
         const savedUser = matchUser ? decodeURIComponent(matchUser[1]) : null;
 
         if (savedUser) {
@@ -139,7 +148,7 @@ export const RoomProvider = ({ children }) => {
 
                 // Check 8-hour expiration manually
                 if (parsedUser.expires && Date.now() > parsedUser.expires) {
-                    document.cookie = `poker_user_${roomId}=; path=/; max-age=0;`;
+                    document.cookie = `grooming_user_${groomingId}=; path=/; max-age=0;`;
                     throw new Error('Session expired');
                 }
 
@@ -148,51 +157,58 @@ export const RoomProvider = ({ children }) => {
                     .from('participants')
                     .select('*')
                     .eq('id', parsedUser.id)
-                    .eq('room_id', roomId)
+                    .eq('room_id', groomingId)
                     .single();
 
                 if (data && !error && data.name === parsedUser.name) {
                     setCurrentUser(data);
                     return true;
                 } else {
-                    document.cookie = `poker_user_${roomId}=; path=/; max-age=0;`;
+                    document.cookie = `grooming_user_${groomingId}=; path=/; max-age=0;`;
                     setCurrentUser(null);
                 }
-            } catch (e) {
-                document.cookie = `poker_user_${roomId}=; path=/; max-age=0;`;
+            } catch {
+                document.cookie = `grooming_user_${groomingId}=; path=/; max-age=0;`;
             }
         }
 
+        // Global nickname migration
+        const oldMatch = document.cookie.match(/(?:^|; )poker_nickname=([^;]+)/);
+        if (oldMatch) {
+            document.cookie = `grooming_nickname=${oldMatch[1]}; path=/; max-age=${60 * 60 * 8};`;
+            document.cookie = `poker_nickname=; path=/; max-age=0;`;
+        }
+
         // Check global cookie for automatic cross-room join
-        const match = document.cookie.match(/(?:^|; )poker_nickname=([^;]+)/);
+        const match = document.cookie.match(/(?:^|; )grooming_nickname=([^;]+)/);
         const globalNickname = match ? decodeURIComponent(match[1]) : null;
 
         if (globalNickname) {
-            const success = await joinRoom(roomId, globalNickname);
+            const success = await joinGrooming(groomingId, globalNickname);
             return success;
         }
 
         return false;
     };
 
-    // Load initial room data
-    const loadRoomData = async (roomId) => {
+    // Load initial grooming data
+    const loadGroomingData = async (groomingId) => {
         setLoading(true);
         try {
-            const { data: roomData, error: roomError } = await supabase
+            const { data: groomingData, error: groomingError } = await supabase
                 .from('rooms')
                 .select('*')
-                .eq('id', roomId)
+                .eq('id', groomingId)
                 .single();
 
-            if (roomError) throw new Error('Failed to load room data.');
+            if (groomingError) throw new Error('Failed to load grooming data.');
 
-            setCurrentRoom(roomData);
+            setCurrentGrooming(groomingData);
 
             const { data: participantsData, error: participantsError } = await supabase
                 .from('participants')
                 .select('*')
-                .eq('room_id', roomId)
+                .eq('room_id', groomingId)
                 .order('joined_at', { ascending: true });
 
             if (participantsError) throw participantsError;
@@ -205,12 +221,12 @@ export const RoomProvider = ({ children }) => {
         }
     };
 
-    const leaveRoom = async (participantId) => {
+    const leaveGrooming = async (participantId) => {
         try {
             await supabase.from('participants').delete().eq('id', participantId);
             setCurrentUser(null);
         } catch (err) {
-            console.error('Failed to leave room:', err.message);
+            console.error('Failed to leave grooming:', err.message);
         }
     };
 
@@ -224,31 +240,31 @@ export const RoomProvider = ({ children }) => {
         }
     };
 
-    const submitVote = async (voteValue) => {
+    const submitVote = async (pointValue) => {
         if (!currentUser) return;
         try {
             const { error } = await supabase
                 .from('participants')
-                .update({ vote: voteValue })
+                .update({ vote: pointValue })
                 .eq('id', currentUser.id);
 
             if (error) throw error;
 
             // Update local state optimistically
-            setCurrentUser(prev => ({ ...prev, vote: voteValue }));
-            setParticipants(prev => prev.map(p => p.id === currentUser.id ? { ...p, vote: voteValue } : p));
+            setCurrentUser(prev => ({ ...prev, vote: pointValue }));
+            setParticipants(prev => prev.map(p => p.id === currentUser.id ? { ...p, vote: pointValue } : p));
         } catch (err) {
             console.error('Failed to submit vote:', err.message);
         }
     };
 
-    // Reveal cards
-    const revealCards = async (roomId) => {
+    // Reveal points
+    const revealCards = async (groomingId) => {
         try {
             const { error } = await supabase
                 .from('rooms')
                 .update({ status: 'revealed' })
-                .eq('id', roomId);
+                .eq('id', groomingId);
 
             if (error) throw error;
 
@@ -260,18 +276,18 @@ export const RoomProvider = ({ children }) => {
                 });
             }
         } catch (err) {
-            console.error('Failed to reveal cards:', err.message);
+            console.error('Failed to reveal points:', err.message);
         }
     };
 
     // Start new voting round
-    const startNewVoting = async (roomId) => {
+    const startNewVoting = async (groomingId) => {
         try {
             // 1. Reset room status
             const { error: roomError } = await supabase
                 .from('rooms')
                 .update({ status: 'voting' })
-                .eq('id', roomId);
+                .eq('id', groomingId);
 
             if (roomError) throw roomError;
 
@@ -279,7 +295,7 @@ export const RoomProvider = ({ children }) => {
             const { error: resetError } = await supabase
                 .from('participants')
                 .update({ vote: null })
-                .eq('room_id', roomId);
+                .eq('room_id', groomingId);
 
             if (resetError) throw resetError;
 
@@ -302,10 +318,10 @@ export const RoomProvider = ({ children }) => {
 
     // Set up real-time subscriptions
     useEffect(() => {
-        if (!currentRoom) return;
+        if (!currentGrooming) return;
 
-        // Unified Room channel with broadcast enabled
-        const channel = supabase.channel(`poker_${currentRoom.id}`, {
+        // Unified channel with broadcast enabled
+        const channel = supabase.channel(`grooming_${currentGrooming.id}`, {
             config: {
                 broadcast: { self: true },
             },
@@ -318,15 +334,15 @@ export const RoomProvider = ({ children }) => {
                 event: 'UPDATE',
                 schema: 'public',
                 table: 'rooms',
-                filter: `id=eq.${currentRoom.id}`
+                filter: `id=eq.${currentGrooming.id}`
             }, (payload) => {
-                setCurrentRoom(payload.new);
+                setCurrentGrooming(payload.new);
             })
             .on('postgres_changes', {
                 event: '*',
                 schema: 'public',
                 table: 'participants',
-                filter: `room_id=eq.${currentRoom.id}`
+                filter: `room_id=eq.${currentGrooming.id}`
             }, (payload) => {
                 if (payload.eventType === 'INSERT') {
                     setParticipants(prev => [...prev, payload.new]);
@@ -342,7 +358,7 @@ export const RoomProvider = ({ children }) => {
                 setTimeout(() => setActionBubble(null), 4000);
             })
             .on('broadcast', { event: 'force_refresh' }, () => {
-                loadRoomData(currentRoom.id);
+                loadGroomingData(currentGrooming.id);
             })
             .subscribe();
 
@@ -350,10 +366,11 @@ export const RoomProvider = ({ children }) => {
             supabase.removeChannel(channel);
             channelRef.current = null;
         };
-    }, [currentRoom?.id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentGrooming?.id]);
 
     const value = {
-        currentRoom,
+        currentGrooming,
         participants,
         currentUser,
         loading,
@@ -361,11 +378,11 @@ export const RoomProvider = ({ children }) => {
         actionBubble,
         hoveredVote,
         setHoveredVote,
-        createRoom,
-        joinRoom,
-        leaveRoom,
+        createGrooming,
+        joinGrooming,
+        leaveGrooming,
         checkSession,
-        loadRoomData,
+        loadGroomingData,
         broadcastRefresh,
         submitVote,
         revealCards,
@@ -373,8 +390,8 @@ export const RoomProvider = ({ children }) => {
     };
 
     return (
-        <RoomContext.Provider value={value}>
+        <GroomingContext.Provider value={value}>
             {children}
-        </RoomContext.Provider>
+        </GroomingContext.Provider>
     );
 };

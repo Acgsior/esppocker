@@ -1,11 +1,11 @@
 import React from 'react';
-import { useRoom } from '../context/RoomContext';
+import { useGrooming } from '../context/GroomingContext';
 import { Check, Loader2, Eye, Users } from 'lucide-react';
 
 export default function ParticipantList() {
-    const { participants, currentUser, currentRoom, actionBubble, hoveredVote } = useRoom();
+    const { participants, currentUser, currentGrooming, actionBubble, hoveredVote } = useGrooming();
 
-    const isRevealed = currentRoom?.status === 'revealed';
+    const isRevealed = currentGrooming?.status === 'revealed';
 
     // Split voters and observers
     const voters = participants.filter(p => !p.is_observer);

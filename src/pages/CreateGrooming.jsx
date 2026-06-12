@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRoom } from '../context/RoomContext';
+import { useGrooming } from '../context/GroomingContext';
 import { Settings, Play } from 'lucide-react';
 import CoffeeIcon from '../components/CoffeeIcon';
 
@@ -8,18 +8,18 @@ const VOTING_TEMPLATES = {
     FIBONACCI: ['0', '0.5', '1', '2', '3', '5', '8', '13', 'Skip'],
 };
 
-export default function CreateRoom() {
-    const [roomName, setRoomName] = useState('');
+export default function CreateGrooming() {
+    const [groomingName, setGroomingName] = useState('');
     const [template, setTemplate] = useState('FIBONACCI');
     const [customStart, setCustomStart] = useState('0');
     const [customMax, setCustomMax] = useState('100');
     const [customStep, setCustomStep] = useState('10');
-    const { createRoom, loading, error } = useRoom();
+    const { createGrooming, loading, error } = useGrooming();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!roomName.trim()) return;
+        if (!groomingName.trim()) return;
 
         let optionsToUse = [];
         if (template === 'CUSTOM') {
@@ -28,7 +28,6 @@ export default function CreateRoom() {
             const step = parseFloat(customStep);
 
             if (!isNaN(start) && !isNaN(max) && !isNaN(step) && step > 0 && start < max) {
-                // To avoid floating point precision issues, we limit decimals
                 let current = start;
                 while (current < max) {
                     let next = current + step;
@@ -38,14 +37,14 @@ export default function CreateRoom() {
                 }
             }
             if (optionsToUse.length === 0) optionsToUse = VOTING_TEMPLATES.FIBONACCI; // Fallback
-            else optionsToUse.push('Skip'); // Default append skip for standard behaviors
+            else optionsToUse.push('Skip');
         } else {
             optionsToUse = VOTING_TEMPLATES[template];
         }
 
-        const roomId = await createRoom(roomName, optionsToUse);
-        if (roomId) {
-            navigate(`/room/${roomId}`);
+        const groomingId = await createGrooming(groomingName, optionsToUse);
+        if (groomingId) {
+            navigate(`/grooming/${groomingId}`);
         }
     };
 
@@ -58,24 +57,24 @@ export default function CreateRoom() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label htmlFor="roomName" className="block text-sm font-medium text-body-strong mb-1">
-                        Room Name
+                    <label htmlFor="groomingName" className="block text-sm font-medium text-body-strong mb-1">
+                        Grooming Name
                     </label>
                     <input
-                        id="roomName"
+                        id="groomingName"
                         type="text"
                         required
                         placeholder="e.g. Sprint 42 Planning"
-                        className="w-full px-4 py-3 rounded-lg border border-hairline focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none"
-                        value={roomName}
-                        onChange={(e) => setRoomName(e.target.value)}
+                        className="w-full px-4 py-3 rounded-lg border border-hairline focus:ring-2 focus:ring-coffee-500 focus:border-coffee-500 transition-colors outline-none bg-transparent"
+                        value={groomingName}
+                        onChange={(e) => setGroomingName(e.target.value)}
                     />
                 </div>
 
                 <div>
                     <label className="block text-sm font-medium text-body-strong mb-3 flex items-center">
                         <Settings className="w-4 h-4 mr-1 text-muted-soft" />
-                        Voting Template
+                        Point Deck
                     </label>
                     <div className="space-y-3">
                         <label className="flex items-center p-3 border border-hairline rounded-lg cursor-pointer hover:bg-surface-soft transition-colors">
@@ -115,7 +114,7 @@ export default function CreateRoom() {
                                                 <label className="block text-xs text-muted mb-1">Start</label>
                                                 <input
                                                     type="number"
-                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none bg-transparent"
                                                     value={customStart}
                                                     onChange={(e) => setCustomStart(e.target.value)}
                                                     required={template === 'CUSTOM'}
@@ -125,7 +124,7 @@ export default function CreateRoom() {
                                                 <label className="block text-xs text-muted mb-1">Max</label>
                                                 <input
                                                     type="number"
-                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none bg-transparent"
                                                     value={customMax}
                                                     onChange={(e) => setCustomMax(e.target.value)}
                                                     required={template === 'CUSTOM'}
@@ -137,7 +136,7 @@ export default function CreateRoom() {
                                                     type="number"
                                                     min="0.1"
                                                     step="0.1"
-                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none"
+                                                    className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none bg-transparent"
                                                     value={customStep}
                                                     onChange={(e) => setCustomStep(e.target.value)}
                                                     required={template === 'CUSTOM'}
@@ -189,18 +188,18 @@ export default function CreateRoom() {
 
                 <button
                     type="submit"
-                    disabled={loading || !roomName.trim()}
+                    disabled={loading || !groomingName.trim()}
                     className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-coffee-600 hover:bg-coffee-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coffee-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                     {loading ? (
                         <span className="animate-pulse flex items-center text-lg font-bold">
                             <CoffeeIcon className="w-6 h-6 mr-2 animate-bounce" />
-                            Brewing room...
+                            Brewing grooming...
                         </span>
                     ) : (
                         <>
                             <Play className="w-4 h-4 mr-2" />
-                            Start Session
+                            Start Grooming
                         </>
                     )}
                 </button>

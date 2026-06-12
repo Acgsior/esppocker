@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useRoom } from '../context/RoomContext';
+import { useGrooming } from '../context/GroomingContext';
 import { Eye, EyeOff } from 'lucide-react';
 
-export default function CardDeck() {
-    const { currentRoom, currentUser, submitVote } = useRoom();
+export default function PointDeck() {
+    const { currentGrooming, currentUser, submitVote } = useGrooming();
     const [isPrivacyMode, setIsPrivacyMode] = useState(false);
 
-    if (!currentRoom || !currentUser) return null;
+    if (!currentGrooming || !currentUser) return null;
 
     if (currentUser.is_observer) {
         return (
@@ -15,15 +15,15 @@ export default function CardDeck() {
                     <Eye className="w-5 h-5 text-muted-soft" />
                 </div>
                 <div className="text-left">
-                    <h2 className="text-base font-bold text-ink">Spectator Mode</h2>
-                    <p className="text-xs text-muted">You are observing this room.</p>
+                    <h2 className="text-base font-bold text-ink">Observer Mode</h2>
+                    <p className="text-xs text-muted">You are observing this grooming.</p>
                 </div>
             </div>
         );
     }
 
-    const options = currentRoom.voting_options || [];
-    const isRevealed = currentRoom.status === 'revealed';
+    const points = currentGrooming.voting_options || [];
+    const isRevealed = currentGrooming.status === 'revealed';
     // Clear visual selection when the room is revealed
     const currentVote = isRevealed ? null : currentUser.vote;
 
@@ -31,13 +31,13 @@ export default function CardDeck() {
         <div className="bg-surface-card rounded-2xl shadow-sm border border-hairline p-6 sticky top-8">
             <div className="flex justify-between items-start mb-6">
                 <div>
-                    <h2 className="text-xl font-bold text-ink">Your Cards</h2>
+                    <h2 className="text-xl font-bold text-ink">Your Points</h2>
                     <div className="relative mt-1">
                         <p className="text-sm text-transparent select-none pointer-events-none" aria-hidden="true">
-                            Select a card to drop your vote.
+                            Select a point to drop your vote.
                         </p>
                         <p className="text-sm text-muted absolute inset-0">
-                            {isRevealed ? 'Round finished.' : 'Select a card to drop your vote.'}
+                            {isRevealed ? 'Vote finished.' : 'Select a point to drop your vote.'}
                         </p>
                     </div>
                 </div>
@@ -64,15 +64,15 @@ export default function CardDeck() {
                 )}
 
                 <div className={`grid grid-cols-3 landscape:max-lg:flex landscape:max-lg:flex-nowrap landscape:max-lg:overflow-x-auto landscape:max-lg:gap-2 landscape:max-lg:pt-4 landscape:max-lg:pb-6 landscape:max-lg:-mx-2 landscape:max-lg:px-2 gap-3 transition-all duration-300 ${isPrivacyMode ? 'group-hover:opacity-100 opacity-0 select-none' : ''}`}>
-                    {options.map((option) => {
-                        const isSelected = currentVote === option;
-                        const isCustomRange = typeof option === 'string' && option.includes('-');
+                    {points.map((point) => {
+                        const isSelected = currentVote === point;
+                        const isCustomRange = typeof point === 'string' && point.includes('-');
 
                         return (
                             <button
-                                key={option}
+                                key={point}
                                 disabled={isRevealed}
-                                onClick={() => submitVote(option)}
+                                onClick={() => submitVote(point)}
                                 className={`
                 relative aspect-[3/4] flex items-center justify-center rounded-xl p-2 transition-all duration-200
                 landscape:max-lg:flex-1 landscape:max-lg:min-w-[40px] landscape:max-lg:max-w-[72px] landscape:max-lg:p-1 landscape:max-lg:rounded-lg
@@ -86,12 +86,12 @@ export default function CardDeck() {
                                 <span className={`font-bold landscape:max-lg:text-base ${isSelected ? 'text-white' : 'text-ink'}`}>
                                     {isCustomRange ? (
                                         <div className="flex flex-col items-center justify-center leading-[1.1] text-base">
-                                            <span>{option.split('-')[0]}</span>
+                                            <span>{point.split('-')[0]}</span>
                                             <span className="text-[0.6em] opacity-50 my-0.5">-</span>
-                                            <span>{option.split('-')[1]}</span>
+                                            <span>{point.split('-')[1]}</span>
                                         </div>
                                     ) : (
-                                        <span className="text-xl">{option}</span>
+                                        <span className="text-xl">{point}</span>
                                     )}
                                 </span>
 
@@ -99,10 +99,10 @@ export default function CardDeck() {
                                 {!isCustomRange && (
                                     <>
                                         <span className={`absolute top-2 left-2 text-[10px] landscape:max-lg:text-[8px] font-medium opacity-50 ${isSelected ? 'text-white' : ''}`}>
-                                            {option}
+                                            {point}
                                         </span>
                                         <span className={`absolute bottom-2 right-2 text-[10px] landscape:max-lg:text-[8px] font-medium opacity-50 rotate-180 ${isSelected ? 'text-white' : ''}`}>
-                                            {option}
+                                            {point}
                                         </span>
                                     </>
                                 )}

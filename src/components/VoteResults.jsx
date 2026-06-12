@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { useRoom } from '../context/RoomContext';
+import { useGrooming } from '../context/GroomingContext';
 import confetti from 'canvas-confetti';
 
-export default function VotingResults() {
-    const { participants, currentRoom, setHoveredVote } = useRoom();
+export default function VoteResults() {
+    const { participants, currentGrooming, setHoveredVote } = useGrooming();
 
-    const isRevealed = currentRoom?.status === 'revealed';
+    const isRevealed = currentGrooming?.status === 'revealed';
 
     const votedParticipants = participants ? participants.filter(p => p.vote !== null && !p.is_observer) : [];
     const validVotes = votedParticipants.filter(p => typeof p.vote === 'string' && p.vote.toLowerCase() !== 'skip');

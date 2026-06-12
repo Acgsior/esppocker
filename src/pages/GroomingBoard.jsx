@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useRoom } from '../context/RoomContext';
-import CardDeck from '../components/CardDeck';
+import { useGrooming } from '../context/GroomingContext';
+import PointDeck from '../components/PointDeck';
 import ParticipantList from '../components/ParticipantList';
-import RoomControls from '../components/RoomControls';
-import VotingResults from '../components/VotingResults';
+import GroomingControls from '../components/GroomingControls';
+import VoteResults from '../components/VoteResults';
 import CoffeeIcon from '../components/CoffeeIcon';
 import { User, LogOut, RefreshCw, Copy, Check, Eye, RotateCcw } from 'lucide-react';
 
@@ -19,7 +19,6 @@ const PRESET_NAMES = [
     'Liam',
     'Morgan',
     'Palak',
-    'Sachin',
     'Terence',
     'Weber',
     'Xueqin',
@@ -27,12 +26,12 @@ const PRESET_NAMES = [
     'Zhichao'
 ];
 
-export default function PokerBoard() {
-    const { id: roomId } = useParams();
+export default function GroomingBoard() {
+    const { id: groomingId } = useParams();
     const navigate = useNavigate();
-    const { currentRoom, currentUser, loadRoomData, checkSession, joinRoom, leaveRoom, broadcastRefresh, loading, error, participants, revealCards, startNewVoting } = useRoom();
+    const { currentGrooming, currentUser, loadGroomingData, checkSession, joinGrooming, leaveGrooming, broadcastRefresh, error, participants, revealCards, startNewVoting } = useGrooming();
     const [nickname, setNickname] = useState(() => {
-        const match = document.cookie.match(/(?:^|; )poker_last_used_name=([^;]+)/);
+        const match = document.cookie.match(/(?:^|; )grooming_last_used_name=([^;]+)/) || document.cookie.match(/(?:^|; )poker_last_used_name=([^;]+)/);
         return match ? decodeURIComponent(match[1]) : '';
     });
     const [isObserver, setIsObserver] = useState(false);
@@ -42,39 +41,37 @@ export default function PokerBoard() {
     const [copied, setCopied] = useState(false);
 
     useEffect(() => {
-        const initRoom = async () => {
-            // First try to load the room to see if it even exists
-            await loadRoomData(roomId);
-
-            // Then check if user has a session for this specific room
-            const hasSession = await checkSession(roomId);
+        const initGrooming = async () => {
+            await loadGroomingData(groomingId);
+            await checkSession(groomingId);
             setIsReady(true);
         };
 
-        initRoom();
-    }, [roomId]);
+        initGrooming();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [groomingId]);
 
     const handleJoin = async (e) => {
         e.preventDefault();
         if (!nickname.trim()) return;
 
         setJoining(true);
-        const success = await joinRoom(roomId, nickname.trim(), isObserver);
+        await joinGrooming(groomingId, nickname.trim(), isObserver);
         setJoining(false);
     };
 
     const handleLeave = async () => {
         if (currentUser) {
-            await leaveRoom(currentUser.id);
+            await leaveGrooming(currentUser.id);
         }
-        document.cookie = `poker_user_${roomId}=; path=/; max-age=0;`;
-        document.cookie = 'poker_nickname=; path=/; max-age=0;';
+        document.cookie = `grooming_user_${groomingId}=; path=/; max-age=0;`;
+        document.cookie = 'grooming_nickname=; path=/; max-age=0;';
         navigate('/');
     };
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
-        await loadRoomData(roomId);
+        await loadGroomingData(groomingId);
         broadcastRefresh();
         setIsRefreshing(false);
     };
@@ -94,22 +91,22 @@ export default function PokerBoard() {
                         <CoffeeIcon className="w-12 h-12 mt-1 animate-bounce" />
                     </div>
                 </div>
-                <h2 className="mt-8 text-2xl font-bold text-ink animate-pulse tracking-wide">Brewing your room...</h2>
+                <h2 className="mt-8 text-2xl font-bold text-ink animate-pulse tracking-wide">Brewing your session...</h2>
                 <p className="mt-3 text-muted font-medium tracking-wide">Please wait while we set up the table</p>
             </div>
         );
     }
 
-    if (error || !currentRoom) {
+    if (error || !currentGrooming) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center bg-canvas/50">
                 <div className="bg-surface-card p-8 rounded-2xl shadow-xl max-w-md w-full border border-hairline">
                     <div className="w-16 h-16 bg-coffee-100 dark:bg-coffee-900/50 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CoffeeIcon className="w-8 h-8" />
                     </div>
-                    <h2 className="text-2xl font-bold text-ink mb-3">Room not found</h2>
+                    <h2 className="text-2xl font-bold text-ink mb-3">Grooming not found</h2>
                     <p className="text-body-strong leading-relaxed">
-                        {error || "The room you are looking for doesn't exist or has been removed."}
+                        {error || "The session you are looking for doesn't exist or has been removed."}
                     </p>
                 </div>
             </div>
@@ -121,8 +118,8 @@ export default function PokerBoard() {
         return (
             <div className="max-w-md w-full mx-auto mt-20 p-8 bg-surface-card rounded-xl shadow-lg border border-hairline">
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold tracking-tight text-ink mb-2">Join Room</h1>
-                    <p className="text-coffee-600 dark:text-coffee-400 font-medium">{currentRoom.name}</p>
+                    <h1 className="text-2xl font-bold tracking-tight text-ink mb-2">Join Grooming</h1>
+                    <p className="text-coffee-600 dark:text-coffee-400 font-medium">{currentGrooming.name}</p>
                 </div>
 
                 <form onSubmit={handleJoin} className="space-y-6">
@@ -205,16 +202,16 @@ export default function PokerBoard() {
             {/* Header */}
             <header className="flex justify-between items-center mb-8 max-lg:mb-3 bg-surface-card p-4 rounded-xl shadow-sm border border-hairline">
                 <div>
-                    <h1 className="text-xl font-bold text-ink">{currentRoom.name}</h1>
+                    <h1 className="text-xl font-bold text-ink">{currentGrooming.name}</h1>
                     <div className="flex items-center text-sm font-medium text-body-strong mt-1">
-                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${currentRoom.status === 'voting' ? 'bg-green-500 animate-pulse' : 'bg-orange-500'}`}></span>
-                        {currentRoom.status === 'voting' ? 'Voting in progress' : 'Cards revealed'}
+                        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${currentGrooming.status === 'voting' ? 'bg-green-500 animate-pulse' : 'bg-orange-500'}`}></span>
+                        {currentGrooming.status === 'voting' ? 'Voting in progress' : 'Points revealed'}
 
                         <span className="mx-2 text-muted-soft">|</span>
                         <button
                             onClick={handleCopyUrl}
                             className={`flex items-center gap-1 transition-colors ${copied ? 'text-green-600' : 'text-muted hover:text-coffee-700'}`}
-                            title="Copy Room Link"
+                            title="Copy Link"
                         >
                             {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                             <span className="text-xs">{copied ? 'Copied!' : 'Copy Link'}</span>
@@ -230,7 +227,7 @@ export default function PokerBoard() {
                         onClick={handleRefresh}
                         disabled={isRefreshing}
                         className="p-2 text-muted hover:text-coffee-700 hover:bg-coffee-50 rounded-lg transition-colors flex items-center"
-                        title="Refresh Room"
+                        title="Refresh"
                     >
                         <RefreshCw className={`w-5 h-5 sm:mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
                         <span className="hidden sm:inline text-sm font-bold">Refresh</span>
@@ -238,7 +235,7 @@ export default function PokerBoard() {
                     <button
                         onClick={handleLeave}
                         className="p-2 text-muted hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex items-center"
-                        title="Leave Room"
+                        title="Leave"
                     >
                         <LogOut className="w-5 h-5 sm:mr-1" />
                         <span className="hidden sm:inline text-sm font-bold">Leave</span>
@@ -249,20 +246,20 @@ export default function PokerBoard() {
             {/* Main Content */}
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-8 max-lg:gap-3 relative">
                 <div className="lg:col-span-3 flex flex-col gap-8 max-lg:gap-3 relative">
-                    {/* Sticky wrapper for RoomControls on mobile */}
+                    {/* Sticky wrapper for GroomingControls on mobile */}
                     <div className="order-1 sticky top-0 z-20 -mx-4 px-4 max-lg:py-1 bg-canvas/95 backdrop-blur-sm lg:static lg:z-auto lg:mx-0 lg:p-0 lg:bg-transparent">
-                        <RoomControls />
+                        <GroomingControls />
                     </div>
                     <div className="order-3 lg:order-2">
                         <ParticipantList />
                     </div>
                     <div className="order-2 lg:order-3">
-                        <VotingResults />
+                        <VoteResults />
                     </div>
                 </div>
 
                 <div className="lg:col-span-1 order-last">
-                    <CardDeck />
+                    <PointDeck />
                 </div>
             </div>
 
@@ -270,18 +267,18 @@ export default function PokerBoard() {
             <div className="fixed bottom-6 right-6 z-50 lg:hidden">
                 <button
                     onClick={() => {
-                        if (currentRoom.status === 'revealed') {
-                            startNewVoting(currentRoom.id);
+                        if (currentGrooming.status === 'revealed') {
+                            startNewVoting(currentGrooming.id);
                         } else {
                             if (participants && participants.length > 0 && participants.some(p => p.vote !== null && p.vote !== undefined)) {
-                                revealCards(currentRoom.id);
+                                revealCards(currentGrooming.id);
                             }
                         }
                     }}
-                    disabled={currentRoom.status !== 'revealed' && (!participants || participants.length === 0 || !participants.some(p => p.vote !== null && p.vote !== undefined))}
-                    className={`p-4 rounded-full shadow-lg text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all ${currentRoom.status === 'revealed' ? 'bg-coffee-800 hover:bg-coffee-900' : 'bg-orange-500 hover:bg-orange-600'}`}
+                    disabled={currentGrooming.status !== 'revealed' && (!participants || participants.length === 0 || !participants.some(p => p.vote !== null && p.vote !== undefined))}
+                    className={`p-4 rounded-full shadow-lg text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all ${currentGrooming.status === 'revealed' ? 'bg-coffee-800 hover:bg-coffee-900' : 'bg-orange-500 hover:bg-orange-600'}`}
                 >
-                    {currentRoom.status === 'revealed' ? (
+                    {currentGrooming.status === 'revealed' ? (
                         <RotateCcw className="w-6 h-6" />
                     ) : (
                         <Eye className="w-6 h-6" />
