@@ -111,8 +111,9 @@ export default function CreateGrooming() {
                                     <div className="space-y-3 mt-2 pr-3">
                                         <div className="grid grid-cols-3 gap-3">
                                             <div>
-                                                <label className="block text-xs text-muted mb-1">Start</label>
+                                                <label htmlFor="customStart" className="block text-xs text-muted mb-1">Start</label>
                                                 <input
+                                                    id="customStart"
                                                     type="number"
                                                     className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none bg-transparent"
                                                     value={customStart}
@@ -121,8 +122,9 @@ export default function CreateGrooming() {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs text-muted mb-1">Max</label>
+                                                <label htmlFor="customMax" className="block text-xs text-muted mb-1">Max</label>
                                                 <input
+                                                    id="customMax"
                                                     type="number"
                                                     className="w-full px-3 py-2 text-sm rounded-md border border-hairline focus:ring-1 focus:ring-coffee-500 focus:border-coffee-500 outline-none bg-transparent"
                                                     value={customMax}
@@ -131,8 +133,9 @@ export default function CreateGrooming() {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs text-muted mb-1">Step</label>
+                                                <label htmlFor="customStep" className="block text-xs text-muted mb-1">Step</label>
                                                 <input
+                                                    id="customStep"
                                                     type="number"
                                                     min="0.1"
                                                     step="0.1"

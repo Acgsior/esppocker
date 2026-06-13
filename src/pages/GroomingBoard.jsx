@@ -61,9 +61,7 @@ export default function GroomingBoard() {
     };
 
     const handleLeave = async () => {
-        if (currentUser) {
-            await leaveGrooming(currentUser.id);
-        }
+        await leaveGrooming(currentUser.id);
         document.cookie = `grooming_user_${groomingId}=; path=/; max-age=0;`;
         document.cookie = 'grooming_nickname=; path=/; max-age=0;';
         navigate('/');
@@ -106,7 +104,7 @@ export default function GroomingBoard() {
                     </div>
                     <h2 className="text-2xl font-bold text-ink mb-3">Grooming not found</h2>
                     <p className="text-body-strong leading-relaxed">
-                        {error || "The session you are looking for doesn't exist or has been removed."}
+                        {error}
                     </p>
                 </div>
             </div>
@@ -263,16 +261,14 @@ export default function GroomingBoard() {
                 </div>
             </div>
 
-            {/* Floating Action Button (Mobile Only) */}
             <div className="fixed bottom-6 right-6 z-50 lg:hidden">
                 <button
+                    aria-label={currentGrooming.status === 'revealed' ? 'Start New Vote (Mobile)' : 'Reveal Points (Mobile)'}
                     onClick={() => {
                         if (currentGrooming.status === 'revealed') {
                             startNewVoting(currentGrooming.id);
                         } else {
-                            if (participants && participants.length > 0 && participants.some(p => p.vote !== null && p.vote !== undefined)) {
-                                revealCards(currentGrooming.id);
-                            }
+                            revealCards(currentGrooming.id);
                         }
                     }}
                     disabled={currentGrooming.status !== 'revealed' && (!participants || participants.length === 0 || !participants.some(p => p.vote !== null && p.vote !== undefined))}

@@ -223,7 +223,8 @@ export const GroomingProvider = ({ children }) => {
 
     const leaveGrooming = async (participantId) => {
         try {
-            await supabase.from('participants').delete().eq('id', participantId);
+            const { error } = await supabase.from('participants').delete().eq('id', participantId);
+            if (error) throw error;
             setCurrentUser(null);
         } catch (err) {
             console.error('Failed to leave grooming:', err.message);

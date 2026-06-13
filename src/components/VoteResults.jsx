@@ -74,7 +74,7 @@ export default function VoteResults() {
         }))
         .sort((a, b) => b.count - a.count);
 
-    const maxCount = results.length > 0 ? results[0].count : 0;
+    const maxCount = results[0].count;
 
     return (
         <div className="bg-surface-card rounded-2xl shadow-sm border border-hairline p-6 max-lg:p-4 relative">
