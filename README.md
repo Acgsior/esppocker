@@ -22,7 +22,7 @@ EspPocker 是一款现代化、支持实时协作的敏捷开发估算工具（P
 本项目极度重视代码可读性与领域模型的清晰度。如果你是开发者，请务必在阅读代码前查阅以下文档：
 
 - **领域术语表**：[CONTEXT.md](./CONTEXT.md) - 定义了诸如 `Grooming`, `Vote`, `Participant` 等核心业务实体的确切含义与上下文。
-- **UI 组件图谱**：[UI_COMPONENT_MAP.md](./UI_COMPONENT_MAP.md) - 梳理了核心页面 `GroomingBoard` 的状态流转及各个核心组件的职责边界。
+- **UI 组件图谱**：[UI_COMPONENT_MAP.md](./UI_COMPONENT_MAP.md) - 梳理了核心页面 `GroomingGate` 和深层组件 `ActiveGrooming` 的状态流转及职责边界。
 
 ## 🚀 本地运行 (Getting Started)
 

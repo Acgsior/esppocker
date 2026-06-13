@@ -3,7 +3,7 @@ import { render, screen, act, waitFor, fireEvent } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { GroomingProvider } from '../../context/GroomingContext';
 import { ThemeProvider } from '../../context/ThemeContext';
-import GroomingBoard from '../GroomingBoard';
+import GroomingGate from '../GroomingGate';
 import { supabase, mockSupabaseResponse, clearSupabaseMocks } from '../../context/__mocks__/supabaseClient';
 
 jest.mock('../../supabaseClient', () => ({
@@ -40,7 +40,7 @@ const renderWithProviders = (ui, { route = '/grooming/room-1' } = {}) => {
   );
 };
 
-describe('GroomingBoard Integration', () => {
+describe('GroomingGate Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     clearSupabaseMocks();
@@ -55,7 +55,7 @@ describe('GroomingBoard Integration', () => {
     // Participants load
     supabase.order.mockResolvedValueOnce({ data: [], error: null });
 
-    renderWithProviders(<GroomingBoard />);
+    renderWithProviders(<GroomingGate />);
 
     // Wait for join screen
     await waitFor(() => {
@@ -178,7 +178,7 @@ describe('GroomingBoard Integration', () => {
   it('renders error state correctly', async () => {
     mockSupabaseResponse('single', null, new Error('Grooming not found'));
     
-    renderWithProviders(<GroomingBoard />);
+    renderWithProviders(<GroomingGate />);
     
     await waitFor(() => {
       expect(screen.getByText('Grooming not found')).toBeInTheDocument();
@@ -191,7 +191,7 @@ describe('GroomingBoard Integration', () => {
     mockSupabaseResponse('single', { id: 'room-1', status: 'voting' });
     supabase.order.mockResolvedValueOnce({ data: [], error: null });
 
-    renderWithProviders(<GroomingBoard />, { route: '/grooming/room-1' });
+    renderWithProviders(<GroomingGate />, { route: '/grooming/room-1' });
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Your Name/i)).toHaveValue('CookieUser');
@@ -205,7 +205,7 @@ describe('GroomingBoard Integration', () => {
     mockSupabaseResponse('single', { id: 'room-2', name: 'Planning 2', status: 'voting', voting_options: ['1'] });
     supabase.order.mockResolvedValueOnce({ data: [], error: null }); // no existing
 
-    renderWithProviders(<GroomingBoard />, { route: '/grooming/room-2' });
+    renderWithProviders(<GroomingGate />, { route: '/grooming/room-2' });
 
     await waitFor(() => {
       expect(screen.getByText('Join Grooming')).toBeInTheDocument();

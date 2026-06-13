@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate, useParams } from 'react-router-dom'
 import CreateGrooming from './pages/CreateGrooming'
-import GroomingBoard from './pages/GroomingBoard'
+import GroomingGate from './pages/GroomingGate'
 
 // Wrapper for redirecting old URLs
 function RoomRedirect() {
@@ -13,7 +13,7 @@ function App() {
     <div className="min-h-screen app-container px-4">
       <Routes>
         <Route path="/" element={<CreateGrooming />} />
-        <Route path="/grooming/:id" element={<GroomingBoard />} />
+        <Route path="/grooming/:id" element={<GroomingGate />} />
         <Route path="/room/:id" element={<RoomRedirect />} />
       </Routes>
     </div>

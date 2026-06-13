@@ -6,7 +6,7 @@ Espresso Grooming Poker 的核心业务领域术语表。用于统一团队和�
 
 **Grooming**:
 一次团队聚集在一起进行需求估算和讨论的具体活动或会话。作为承载参与者和投票行为的核心容器。
-_Avoid_: Room, Session, Game
+_Avoid_: Room, Session, Game, Board
 
 **Vote**:
 在 Grooming 中进行的单个完整估算周期（包括大家出牌和最终开牌）。
