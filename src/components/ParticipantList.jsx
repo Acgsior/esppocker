@@ -116,13 +116,15 @@ export default function ParticipantList() {
                                 {/* Action Bubble */}
                                 {actionBubble?.userId === participant.id && (
                                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-10 animate-float-up pointer-events-none drop-shadow-md">
-                                        <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 whitespace-nowrap ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}>
+                                        <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 whitespace-nowrap ${actionBubble.type === 'reveal' ? 'bg-orange-500' : 'bg-coffee-800'}`}>
                                             {actionBubble.type === 'start' ? (
                                                 <><span className="text-sm">🔄</span><span>Start New!</span></>
+                                            ) : actionBubble.type === 'restart' ? (
+                                                <><span className="text-sm">🔄</span><span>Restart!</span></>
                                             ) : (
                                                 <><span className="text-sm">🤘</span><span>Open!</span></>
                                             )}
-                                            <div className={`absolute w-2 h-2 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}></div>
+                                            <div className={`absolute w-2 h-2 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom ${actionBubble.type === 'reveal' ? 'bg-orange-500' : 'bg-coffee-800'}`}></div>
                                         </div>
                                     </div>
                                 )}
@@ -153,13 +155,15 @@ export default function ParticipantList() {
                                     {/* Action Bubble for Observers */}
                                     {actionBubble?.userId === observer.id && (
                                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-10 animate-float-up pointer-events-none drop-shadow-md">
-                                            <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 whitespace-nowrap ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}>
+                                            <div className={`text-white text-xs font-bold px-3 py-1.5 rounded-2xl shadow-lg relative flex items-center gap-1.5 whitespace-nowrap ${actionBubble.type === 'reveal' ? 'bg-orange-500' : 'bg-coffee-800'}`}>
                                                 {actionBubble.type === 'start' ? (
                                                     <><span className="text-sm">🔄</span><span>Start New!</span></>
+                                                ) : actionBubble.type === 'restart' ? (
+                                                    <><span className="text-sm">🔄</span><span>Restart!</span></>
                                                 ) : (
                                                     <><span className="text-sm">🤘</span><span>Open!</span></>
                                                 )}
-                                                <div className={`absolute w-2 h-2 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom ${actionBubble.type === 'start' ? 'bg-coffee-800' : 'bg-orange-500'}`}></div>
+                                                <div className={`absolute w-2 h-2 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2 rounded-sm clip-bottom ${actionBubble.type === 'reveal' ? 'bg-orange-500' : 'bg-coffee-800'}`}></div>
                                             </div>
                                         </div>
                                     )}

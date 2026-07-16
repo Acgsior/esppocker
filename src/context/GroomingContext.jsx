@@ -273,6 +273,25 @@ export const GroomingProvider = ({ children }) => {
         }
     };
 
+    // Restart current vote (clear all points without changing status)
+    const restartVote = async (groomingId) => {
+        try {
+            const { error: resetError } = await supabase
+                .from('participants')
+                .update({ vote: null })
+                .eq('room_id', groomingId);
+
+            if (resetError) throw resetError;
+
+            if (currentUser) {
+                setCurrentUser(prev => ({ ...prev, vote: null }));
+                broadcastAction({ userId: currentUser.id, type: 'restart' });
+            }
+        } catch (err) {
+            console.error('Failed to restart vote:', err.message);
+        }
+    };
+
     const value = {
         currentGrooming,
         participants,
@@ -290,7 +309,8 @@ export const GroomingProvider = ({ children }) => {
         broadcastRefresh,
         submitVote,
         revealCards,
-        startNewVoting
+        startNewVoting,
+        restartVote
     };
 
     return (

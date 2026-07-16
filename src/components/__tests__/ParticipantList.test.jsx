@@ -130,4 +130,18 @@ describe('ParticipantList Component', () => {
     rerender(<ParticipantList />);
     expect(screen.getByText('Start New!')).toBeInTheDocument();
   });
+
+  it('renders restart action bubble for voters', () => {
+    useGrooming.mockReturnValue({
+      participants: [
+        { id: 'u1', name: 'Alice', is_observer: false, vote: '5' },
+      ],
+      currentUser: { id: 'u2' },
+      currentGrooming: { status: 'voting' },
+      actionBubble: { userId: 'u1', type: 'restart' },
+    });
+    render(<ParticipantList />);
+    
+    expect(screen.getByText('Restart!')).toBeInTheDocument();
+  });
 });

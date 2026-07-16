@@ -36,6 +36,7 @@ const TestComponent = () => {
       <button onClick={() => ctx.submitVote('5')}>Submit Vote</button>
       <button onClick={() => ctx.revealCards('room-1')}>Reveal Cards</button>
       <button onClick={() => ctx.startNewVoting('room-1')}>Start New</button>
+      <button onClick={() => ctx.restartVote('room-1')}>Restart Vote</button>
     </div>
   );
 };
@@ -588,6 +589,40 @@ describe('GroomingContext exhaustive tests', () => {
       });
       expect(consoleSpy).toHaveBeenCalledWith('Failed to start new voting:', 'start error');
       consoleSpy.mockRestore();
+    });
+
+    it('handles restartVote error', async () => {
+      const { result } = renderHook(() => useGrooming(), { wrapper: GroomingProvider });
+      supabase.update.mockReturnValueOnce({
+        eq: jest.fn().mockResolvedValueOnce({ error: new Error('restart error') })
+      });
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      await act(async () => {
+        await result.current.restartVote('room-1');
+      });
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to restart vote:', 'restart error');
+      consoleSpy.mockRestore();
+    });
+
+    it('restartVote: resets votes without changing room status', async () => {
+      render(<GroomingProvider><TestComponent /></GroomingProvider>);
+
+      // Join first to set currentUser
+      mockSupabaseResponse('single', { id: 'room-1' });
+      supabase.order.mockResolvedValueOnce({ data: [], error: null });
+      mockSupabaseResponse('single', { id: 'user-1', name: 'Alice' });
+      await act(async () => { screen.getByText('Join Room').click(); });
+      await waitFor(() => {
+        expect(screen.getByTestId('user-id')).toHaveTextContent('user-1');
+      });
+
+      // Restart vote
+      supabase.eq.mockResolvedValueOnce({ error: null }); // participants reset
+      await act(async () => { screen.getByText('Restart Vote').click(); });
+      await waitFor(() => {
+        // Should only update participants, NOT rooms status
+        expect(supabase.update).toHaveBeenCalledWith({ vote: null });
+      });
     });
 
     it('handles broadcastRefresh without channelRef', () => {

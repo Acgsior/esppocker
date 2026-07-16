@@ -15,6 +15,7 @@ jest.mock('../../context/ThemeContext', () => ({
 describe('GroomingControls Component', () => {
   const mockRevealCards = jest.fn();
   const mockStartNewVoting = jest.fn();
+  const mockRestartVote = jest.fn();
   const mockToggleTheme = jest.fn();
 
   beforeEach(() => {
@@ -34,6 +35,7 @@ describe('GroomingControls Component', () => {
       participants: [{ id: 'u1', vote: null }],
       revealCards: mockRevealCards,
       startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
     });
     render(<GroomingControls />);
     
@@ -48,6 +50,7 @@ describe('GroomingControls Component', () => {
       participants: [{ id: 'u1', vote: '5' }],
       revealCards: mockRevealCards,
       startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
     });
     render(<GroomingControls />);
     
@@ -64,6 +67,7 @@ describe('GroomingControls Component', () => {
       participants: [{ id: 'u1', vote: '5' }],
       revealCards: mockRevealCards,
       startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
     });
     render(<GroomingControls />);
     
@@ -80,6 +84,7 @@ describe('GroomingControls Component', () => {
       participants: [],
       revealCards: mockRevealCards,
       startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
     });
     useTheme.mockReturnValue({ theme: 'dark', toggleTheme: mockToggleTheme });
     
@@ -89,4 +94,92 @@ describe('GroomingControls Component', () => {
     fireEvent.click(themeBtn);
     expect(mockToggleTheme).toHaveBeenCalled();
   });
+
+  // --- Restart Vote tests ---
+
+  it('renders Restart Vote button during voting phase', () => {
+    useGrooming.mockReturnValue({
+      currentGrooming: { id: 'room-1', status: 'voting' },
+      participants: [{ id: 'u1', vote: '5' }],
+      revealCards: mockRevealCards,
+      startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
+    });
+    render(<GroomingControls />);
+    
+    const btn = screen.getByTitle('Restart Vote');
+    expect(btn).toBeInTheDocument();
+    expect(btn).not.toBeDisabled();
+  });
+
+  it('disables Restart Vote button when no one has voted', () => {
+    useGrooming.mockReturnValue({
+      currentGrooming: { id: 'room-1', status: 'voting' },
+      participants: [{ id: 'u1', vote: null }],
+      revealCards: mockRevealCards,
+      startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
+    });
+    render(<GroomingControls />);
+    
+    const btn = screen.getByTitle('Restart Vote');
+    expect(btn).toBeDisabled();
+  });
+
+  it('does not render Restart Vote button when revealed', () => {
+    useGrooming.mockReturnValue({
+      currentGrooming: { id: 'room-1', status: 'revealed' },
+      participants: [{ id: 'u1', vote: '5' }],
+      revealCards: mockRevealCards,
+      startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
+    });
+    render(<GroomingControls />);
+    
+    expect(screen.queryByTitle('Restart Vote')).not.toBeInTheDocument();
+  });
+
+  it('shows confirm modal on Restart Vote click and calls restartVote on confirm', () => {
+    useGrooming.mockReturnValue({
+      currentGrooming: { id: 'room-1', status: 'voting' },
+      participants: [{ id: 'u1', vote: '5' }],
+      revealCards: mockRevealCards,
+      startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
+    });
+    render(<GroomingControls />);
+    
+    // Click Restart Vote to open modal
+    fireEvent.click(screen.getByTitle('Restart Vote'));
+    
+    // Modal should be visible
+    expect(screen.getByText('All current votes will be cleared. Participants will need to vote again.')).toBeInTheDocument();
+    
+    // Click Restart to confirm
+    fireEvent.click(screen.getByRole('button', { name: 'Restart' }));
+    expect(mockRestartVote).toHaveBeenCalledWith('room-1');
+  });
+
+  it('closes confirm modal on Cancel click without calling restartVote', () => {
+    useGrooming.mockReturnValue({
+      currentGrooming: { id: 'room-1', status: 'voting' },
+      participants: [{ id: 'u1', vote: '5' }],
+      revealCards: mockRevealCards,
+      startNewVoting: mockStartNewVoting,
+      restartVote: mockRestartVote,
+    });
+    render(<GroomingControls />);
+    
+    // Open modal
+    fireEvent.click(screen.getByTitle('Restart Vote'));
+    expect(screen.getByText('All current votes will be cleared. Participants will need to vote again.')).toBeInTheDocument();
+    
+    // Click Cancel
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(mockRestartVote).not.toHaveBeenCalled();
+    
+    // Modal should be dismissed
+    expect(screen.queryByText('All current votes will be cleared. Participants will need to vote again.')).not.toBeInTheDocument();
+  });
 });
+

@@ -1,51 +1,81 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGrooming } from '../context/GroomingContext';
 import { useTheme } from '../context/ThemeContext';
 import { Eye, RotateCcw, Moon, Sun } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
 
 export default function GroomingControls() {
-    const { currentGrooming, participants, revealCards, startNewVoting } = useGrooming();
+    const { currentGrooming, participants, revealCards, startNewVoting, restartVote } = useGrooming();
     const { theme, toggleTheme } = useTheme();
+    const [showRestartConfirm, setShowRestartConfirm] = useState(false);
 
     if (!currentGrooming) return null;
 
     const isRevealed = currentGrooming.status === 'revealed';
     const hasVotes = participants && participants.length > 0 && participants.some(p => p.vote !== null && p.vote !== undefined);
 
+    const handleRestartConfirm = () => {
+        restartVote(currentGrooming.id);
+        setShowRestartConfirm(false);
+    };
+
     return (
-        <div className="bg-surface-card rounded-2xl shadow-sm border border-hairline p-6 max-lg:py-3 max-lg:px-4 flex flex-col sm:flex-row items-center justify-between gap-4 max-lg:gap-2">
-            <div>
-                <h3 className="font-semibold text-ink">Grooming Controls</h3>
-                <p className="text-sm text-muted">Manage the current Vote.</p>
+        <>
+            <div className="bg-surface-card rounded-2xl shadow-sm border border-hairline p-6 max-lg:py-3 max-lg:px-4 flex flex-col sm:flex-row items-center justify-between gap-4 max-lg:gap-2">
+                <div>
+                    <h3 className="font-semibold text-ink">Grooming Controls</h3>
+                    <p className="text-sm text-muted">Manage the current Vote.</p>
+                </div>
+
+                <div className="flex gap-3 w-full sm:w-auto items-center">
+                    <button
+                        onClick={toggleTheme}
+                        className="p-2.5 rounded-lg border border-hairline hover:bg-surface-soft text-ink transition-colors"
+                        title="Toggle Theme"
+                    >
+                        {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                    </button>
+                    {!isRevealed ? (
+                        <>
+                            <button
+                                onClick={() => setShowRestartConfirm(true)}
+                                disabled={!hasVotes}
+                                className="flex items-center justify-center py-2.5 px-4 max-lg:py-2 max-lg:px-3 border border-hairline rounded-lg text-sm font-medium text-muted hover:text-ink hover:bg-surface-soft focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                title="Restart Vote"
+                            >
+                                <RotateCcw className="w-4 h-4 mr-2" />
+                                Restart Vote
+                            </button>
+                            <button
+                                onClick={() => revealCards(currentGrooming.id)}
+                                disabled={!hasVotes}
+                                className="flex-1 sm:flex-none flex items-center justify-center py-2.5 px-6 max-lg:py-2 max-lg:px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            >
+                                <Eye className="w-4 h-4 mr-2" />
+                                Reveal Points
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            onClick={() => startNewVoting(currentGrooming.id)}
+                            className="flex-1 sm:flex-none flex items-center justify-center py-2.5 px-6 max-lg:py-2 max-lg:px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-coffee-800 hover:bg-coffee-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coffee-800 transition-all"
+                        >
+                            <RotateCcw className="w-4 h-4 mr-2" />
+                            Start New Vote
+                        </button>
+                    )}
+                </div>
             </div>
 
-            <div className="flex gap-3 w-full sm:w-auto items-center">
-                <button
-                    onClick={toggleTheme}
-                    className="p-2.5 rounded-lg border border-hairline hover:bg-surface-soft text-ink transition-colors"
-                    title="Toggle Theme"
-                >
-                    {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </button>
-                {!isRevealed ? (
-                    <button
-                        onClick={() => revealCards(currentGrooming.id)}
-                        disabled={!hasVotes}
-                        className="flex-1 sm:flex-none flex items-center justify-center py-2.5 px-6 max-lg:py-2 max-lg:px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Reveal Points
-                    </button>
-                ) : (
-                    <button
-                        onClick={() => startNewVoting(currentGrooming.id)}
-                        className="flex-1 sm:flex-none flex items-center justify-center py-2.5 px-6 max-lg:py-2 max-lg:px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-coffee-800 hover:bg-coffee-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coffee-800 transition-all"
-                    >
-                        <RotateCcw className="w-4 h-4 mr-2" />
-                        Start New Vote
-                    </button>
-                )}
-            </div>
-        </div>
+            <ConfirmModal
+                isOpen={showRestartConfirm}
+                title="Restart Vote"
+                message="All current votes will be cleared. Participants will need to vote again."
+                confirmLabel="Restart"
+                onConfirm={handleRestartConfirm}
+                onCancel={() => setShowRestartConfirm(false)}
+            />
+        </>
     );
 }
+
